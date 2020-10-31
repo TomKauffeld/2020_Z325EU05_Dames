@@ -55,7 +55,7 @@ void server(void){
     fd_set rdfs;
 
     while(running){
-        int i = 0;
+        
         FD_ZERO(&rdfs);
 
             
@@ -65,7 +65,7 @@ void server(void){
         FD_SET(mysocket, &rdfs);
 
             
-        for(i = 0; i < actuel; i++){
+        for(int i = 0; i < actuel; i++){
             FD_SET(joueurs[i].mysocket, &rdfs);
         }
 
@@ -98,8 +98,8 @@ void server(void){
             joueurs[actuel] = j;
             actuel++;
         } else {
-            int i = 0;
-            for(i = 0; i < actuel; i++){
+            
+            for(int i = 0; i < actuel; i++){
                     
                 if(FD_ISSET(joueurs[i].mysocket, &rdfs)){
                     Joueur joueur = joueurs[i];
