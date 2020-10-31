@@ -1,106 +1,145 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/time.h>
-
-#include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
-
-#define SOCKET_PROTOCOL_TCP 6
-#define BUFFER_SIZE 64
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <netdb.h> 
 
 typedef struct {
-    int socket;
-    char nom[BUFFER_SIZE];
+    int mysocket;
+    char pseudo[1024];
 }Joueur;
 
-#define TCP_CONNECTIONS 5
+#define BUFFER_SIZE 1024
+#define MAX_JOUEURS 3
+typedef struct sockaddr_in SOCKADDR_IN;
+typedef struct sockaddr SOCKADDR;
+typedef struct in_addr IN_ADDR;
 
+void server(void){
 
-int main(int argc, char** argv)
-{
-    uint16_t port = 1234;
-    struct sockaddr_in sin;
-    int i, ret, s, client, running = 1, nbclient = 0, socket;
+    int mysocket;
+    SOCKADDR_IN csin = { 0 };
     char buffer[BUFFER_SIZE];
-    size_t len;
-    Joueur joueur[2];
-    fd_set fd;
-    sockaddr_in sain = { 0 };
+    int running = 1, actuel = 0, max, n = 0; 
+    Joueur joueurs[MAX_JOUEURS];
 
-    len = sizeof sain;
-    
-    if (argc > 1)
-        sscanf(argv[1], "%hu", &port);
-    printf("Utilisation du port %hu\n", port);
-    
-    
-    s = socket(AF_INET, SOCK_STREAM, SOCKET_PROTOCOL_TCP);
-    
+
+    mysocket = socket(AF_INET, SOCK_STREAM, 0);
+    SOCKADDR_IN sin = { 0 };
+
+    if(mysocket == -1){
+        perror("socket()");
+        exit(errno);
+    }
+
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
-    sin.sin_port = htons(port);
+    sin.sin_port = htons(1234);
     sin.sin_family = AF_INET;
 
-    for (i=0; i<8; i++) {
-        sin.sin_zero[i] = 0;
-    }
-    if (s < 0)
-    {
-        printf("Erreur dans l'ouverture du socket\n");
-        return 1;
+    if(bind(mysocket,(SOCKADDR *) &sin, sizeof sin) == -1){
+        perror("bind()");
+        exit(errno);
     }
 
-    
-    if (bind(s,(struct sockaddr *)&sin, sizeof sin) < 0)
-    {
-        close(s);
-        printf("Erreur de bind avec le socket\n");
-        return 2;
-    }
-    
-    if (listen(s, TCP_CONNECTIONS) < 0)
-    {
-        close(s);
-        printf("Erreur d'ecoute sur le socket\n");
-        return 2;
+    if(listen(mysocket, MAX_JOUEURS) == -1){
+        perror("listen()");
+        exit(errno);
     }
 
-    while(running)
-    {
-        FD_ZERO(&fd);
-        FD_SET(STDIN_FILENO, &fd);
-        FD_SET(s, &fd);
+    max = mysocket;
+    fd_set rdfs;
+
+    while(running){
+        int i = 0;
+        FD_ZERO(&rdfs);
+
+            
+        FD_SET(STDIN_FILENO, &rdfs);
+
+            
+        FD_SET(mysocket, &rdfs);
+
+            
+        for(i = 0; i < actuel; i++){
+            FD_SET(joueurs[i].mysocket, &rdfs);
+        }
+
+        if(select(max + 1, &rdfs, NULL, NULL, NULL) == -1){
+            perror("select()");
+            exit(errno);
+        }
+
+            
+        if(FD_ISSET(STDIN_FILENO, &rdfs)){
         
-        for(int i = 0; i< nbclient; i++){
-            FD_SET(joueur[i].sock, &fd);
-        }
-
-        if(select(s + 1, &fd, NULL, NULL, NULL) < 0){
-            close(s);
-            printf("erreur select");
-            return 2;
-        }
-
-        if(FD_ISSET(STDIN_FILENO, &fd)){
             break;
         }
-        else if(FD_ISSET(s, &fd)){
-            socket = accept(s, (sockaddr * )&sain, &len);
-            if(socket < 0){
-                printf("erreur accept");
+        else if(FD_ISSET(mysocket, &rdfs)){
+        
+            
+            socklen_t sinsize = sizeof csin;
+            int csock = accept(mysocket, (SOCKADDR *)&csin, &sinsize);
+            if(csock == -1){
+                perror("accept()");
                 continue;
             }
-            
 
+            max = csock > max ? csock : max;
+
+            FD_SET(csock, &rdfs);
+
+            Joueur j = { csock };
+            strncpy(j.pseudo, buffer, BUFFER_SIZE - 1);
+            joueurs[actuel] = j;
+            actuel++;
+        } else {
+            int i = 0;
+            for(i = 0; i < actuel; i++){
+                    
+                if(FD_ISSET(joueurs[i].mysocket, &rdfs)){
+                    Joueur joueur = joueurs[i];
+                   
+                    n = 0;
+
+                    if((n = recv(mysocket, buffer, BUFFER_SIZE - 1, 0)) < 0){
+                        perror("recv()");
+                        n = 0;
+                    }
+                    buffer[n] = 0;
+                    
+                    if(n == 0){
+                        memmove(joueurs + i, joueurs + i + 1, (actuel - i - 1) * sizeof(Joueur));
+
+                        actuel--;
+
+                        close(joueurs[i].mysocket);
+
+                        strncpy(buffer, joueur.pseudo, BUFFER_SIZE - 1);
+                        strncat(buffer, " dÃ©connectÃ© ", BUFFER_SIZE - strlen(buffer) - 1);
+                        //envoi message
+                    } else {
+                        //envoi message
+                    }
+                    break;
+                }
+            }
         }
-
-
     }
 
+    for(int i = 0; i < actuel; i++){
+        close(joueurs[i].mysocket);
+    }
+    close(mysocket);
+}
 
-    close(s);
-    return 0;
+
+int main(int argc, char **argv){
+   server();
+
+   return 0;
 }
