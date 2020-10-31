@@ -14,6 +14,7 @@ typedef struct {
     char pseudo[1024];
 }Joueur;
 
+
 #define BUFFER_SIZE 1024
 #define MAX_JOUEURS 3
 typedef struct sockaddr_in SOCKADDR_IN;
@@ -55,7 +56,7 @@ void server(void){
     fd_set rdfs;
 
     while(running){
-        
+        int i = 0;
         FD_ZERO(&rdfs);
 
             
@@ -65,7 +66,7 @@ void server(void){
         FD_SET(mysocket, &rdfs);
 
             
-        for(int i = 0; i < actuel; i++){
+        for(i = 0; i < actuel; i++){
             FD_SET(joueurs[i].mysocket, &rdfs);
         }
 
@@ -89,6 +90,14 @@ void server(void){
                 continue;
             }
 
+            n = 0;
+
+            if((n = recv(csock, buffer, BUFFER_SIZE - 1, 0)) < 0){
+                perror("recv()");
+                n = 0;
+            }
+            buffer[n] = 0;
+
             max = csock > max ? csock : max;
 
             FD_SET(csock, &rdfs);
@@ -98,7 +107,6 @@ void server(void){
             joueurs[actuel] = j;
             actuel++;
         } else {
-            
             for(int i = 0; i < actuel; i++){
                     
                 if(FD_ISSET(joueurs[i].mysocket, &rdfs)){
@@ -106,7 +114,7 @@ void server(void){
                    
                     n = 0;
 
-                    if((n = recv(mysocket, buffer, BUFFER_SIZE - 1, 0)) < 0){
+                    if((n = recv(joueurs[i].mysocket, buffer, BUFFER_SIZE - 1, 0)) < 0){
                         perror("recv()");
                         n = 0;
                     }

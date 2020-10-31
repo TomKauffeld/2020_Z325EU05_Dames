@@ -52,6 +52,7 @@ void connexion(const char *address, const char *pseudo){
         perror("send()");
         exit(errno);
     }
+    /**/
 
     while(running){
         FD_ZERO(&rdfs);
@@ -90,7 +91,7 @@ void connexion(const char *address, const char *pseudo){
             buffer[n] = 0;
 
             if(n == 0){
-                printf("Serveur déconnecté !\n");
+                printf("Serveur dÃ©connectÃ© !\n");
                 break;
             }
             puts(buffer);
