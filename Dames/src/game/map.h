@@ -3,8 +3,12 @@
 
 #include <inttypes.h>
 #include "../utils/bool.h"
+#include "../utils/vector.h"
 
 #define EMPTY 0x00
+
+#define PLAYER 0xF0
+#define PIECE 0x0F
 
 #define PLAYER_1 0x10
 #define PLAYER_2 0x20
@@ -22,9 +26,9 @@ typedef uint8_t Map;
 
 Map* map_init();
 
-bool map_validate_move(Map* map, uint8_t from, uint8_t to);
+bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
 
-bool map_move(Map* map, uint8_t from, uint8_t to);
+bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
 
 void map_destroy(Map* map);
 
