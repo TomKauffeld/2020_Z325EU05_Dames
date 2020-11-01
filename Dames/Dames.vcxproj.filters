@@ -10,6 +10,18 @@
     <Filter Include="src\utils">
       <UniqueIdentifier>{84b3b2dd-59d0-444f-b5f4-cf2c80cf601c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\network">
+      <UniqueIdentifier>{1175bf87-da79-44f0-9dc5-b20fddfd7b57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\network\server">
+      <UniqueIdentifier>{d8762be4-fd9c-4e82-b744-523cff82d319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\network\common">
+      <UniqueIdentifier>{b18bafd0-12e5-45c5-aa74-fb9c60d2aa1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\network\client">
+      <UniqueIdentifier>{ae3a9f8b-849c-4c1c-ba63-47569cbc978c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clientTCPmulti.c">
@@ -24,6 +36,9 @@
     <ClCompile Include="src\utils\vector.c">
       <Filter>src\utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\common\sendMessage.c">
+      <Filter>src\network\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Header.h">
@@ -37,6 +52,15 @@
     </ClInclude>
     <ClInclude Include="src\utils\vector.h">
       <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\server\treatMessage.h">
+      <Filter>src\network\server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\common\sendMessage.h">
+      <Filter>src\network\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\common\codeMessages.h">
+      <Filter>src\network\common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
