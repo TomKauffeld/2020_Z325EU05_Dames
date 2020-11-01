@@ -17,7 +17,6 @@ typedef struct account {
 
 
 typedef struct gameState {
-	uint8_t id;
 	Login* player1;
 	Login* player2;
 	Map* map;
@@ -38,6 +37,14 @@ ServerState * server_init();
 
 Login* server_get_login(ServerState* serverState, int socket);
 
+int server_get_game_index(ServerState* serverState, int socket);
+
+GameState* server_get_game(ServerState* serverState, int socket);
+
+GameState* server_join_game(ServerState* serverState, int socket, uint8_t game_id);
+
+GameState* server_spectate_game(ServerState* serverState, int socket, uint8_t game_id);
+
 void server_remove_login(ServerState* serverState, int socket, server_on_end_game on_end_game);
 
 bool server_is_username_taken(ServerState* serverState, char* username);
@@ -47,6 +54,8 @@ bool server_add_account(ServerState* serverState, char* username, char* password
 bool server_connect(ServerState* serverState, char* username, bool isGuest, int socket);
 
 bool server_check_username_password(ServerState* serverState, char* username, char* password);
+
+bool server_create_new_game(ServerState* serverState, int socket);
 
 void server_destroy(ServerState* serverState);
 
