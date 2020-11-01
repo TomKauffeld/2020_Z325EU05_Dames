@@ -15,6 +15,7 @@ bool send_message(int socket, uint8_t messageType, void* data, size_t dataSize)
 	if (dataSize > 0)
 		memcpy(message + 1, data, dataSize);
 	fwrite(message, dataSize + 1, 1, socket);
+	fflush(socket);
 	free(message);
 	return true;
 }

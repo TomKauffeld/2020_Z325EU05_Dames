@@ -40,16 +40,16 @@ bool send_message_list_games(int socket, struct game* games, uint8_t nbGames)
 	return result;
 }
 
-bool send_message_guest_name(int socket, uint8_t name_length, char* name)
+bool send_message_guest_name(int socket, char* name)
 {
 	bool result;
-	uint8_t* data = (uint8_t*)malloc(name_length + 1);
+	uint8_t* data = (uint8_t*)malloc(strlen(name) + 1);
 	if (data == NULL)
 		return false;
-	data[0] = name_length;
-	memcpy(data + 1, name, name_length);
+	data[0] = strlen(name);
+	memcpy(data + 1, name, strlen(name));
 
-	result = send_message(socket, CM_NOM_INVITE, data, name_length + 1);
+	result = send_message(socket, CM_NOM_INVITE, data, strlen(name) + 1);
 	free(data);
 	return result;
 }
