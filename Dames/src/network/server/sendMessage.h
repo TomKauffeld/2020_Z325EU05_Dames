@@ -13,7 +13,7 @@ bool send_message_sync(int socket, uint8_t player, void* map);
 
 bool send_message_list_games(int socket, struct game* games, uint8_t nbGames);
 
-bool send_message_guest_name(int socket, uint8_t name_length, char* name);
+bool send_message_guest_name(int socket, char* name);
 
 bool send_message_ok(int socket);
 

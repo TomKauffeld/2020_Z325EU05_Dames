@@ -2,10 +2,11 @@
 #define __NETWORK_SERVER_SERVER_H__
 
 #include "../../utils/bool.h"
+#include "../../utils/sha256.h"
 
 typedef struct account {
 	char* username;
-	char* password;
+	BYTE password[SHA256_BLOCK_SIZE];
 } Account;
 
 typedef struct login {

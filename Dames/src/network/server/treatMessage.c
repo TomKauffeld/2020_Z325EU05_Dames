@@ -140,6 +140,16 @@ bool server_treat_login_account(ServerState* serverState, int socket)
 	return send_message_ok(socket);
 }
 
+bool server_treat_login_guest(ServerState* serverState, int socket)
+{
+	char username[20];
+	memset(username, 0x00, 20);
+	sprintf(username, "invite #%d", serverState->nblogins + 1);
+	if (!server_connect(serverState, username, true, socket))
+		return false;
+	return send_message_guest_name(socket, username);
+}
+
 bool server_treat_ping(ServerState* serverState, int socket)
 {
 	return send_message_pong(socket);
