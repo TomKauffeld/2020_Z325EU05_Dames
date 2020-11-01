@@ -9,13 +9,17 @@
 #include <unistd.h>
 #include <netdb.h> 
 
+#include "network/server/server.h"
+#include "network/common/sendMessage.h"
+
+
 #define BUFFER_SIZE 1024
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
 
-void connexion(const char *address, const char *pseudo){
+void connexion(const char *address){
     int running = 1;
     char buffer[BUFFER_SIZE], *p = NULL;
     int mysocket, n = 0;
@@ -48,10 +52,6 @@ void connexion(const char *address, const char *pseudo){
         exit(errno);
     }
 
-    if(send(mysocket, pseudo, strlen(pseudo), 0) < 0){
-        perror("send()");
-        exit(errno);
-    }
     /**/
 
     while(running){
@@ -75,11 +75,12 @@ void connexion(const char *address, const char *pseudo){
                     buffer[BUFFER_SIZE - 1] = 0;
                 }
             }
-            
-            if(send(mysocket, buffer, strlen(buffer), 0) < 0){
-                perror("send()");
-                exit(errno);
-            }
+            /*parser*/
+                if(!send_message(mysocket, uint8_t messageType, buffer, strlen(buffer))){
+                    perror("send_message()");
+                    exit(errno);
+                }
+            /**/
 
         } else if(FD_ISSET(mysocket, &rdfs)){
 
@@ -91,7 +92,7 @@ void connexion(const char *address, const char *pseudo){
             buffer[n] = 0;
 
             if(n == 0){
-                printf("Serveur dÃ©connectÃ© !\n");
+                printf("Serveur dÃƒÂ©connectÃƒÂ© !\n");
                 break;
             }
             puts(buffer);
@@ -102,11 +103,11 @@ void connexion(const char *address, const char *pseudo){
 
 int main(int argc, char **argv){
     if(argc < 2){
-        printf("Too few argument (adresse + pseudo) \n");
+        printf("Too few argument (adresse) \n");
         return -1;
     }
 
-    connexion(argv[1], argv[2]);
+    connexion(argv[1]);
 
     return 0;
 }
