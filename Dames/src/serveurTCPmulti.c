@@ -130,8 +130,30 @@ void server(void){
                         strncpy(buffer, joueur.pseudo, BUFFER_SIZE - 1);
                         strncat(buffer, " dÃ©connectÃ© ", BUFFER_SIZE - strlen(buffer) - 1);
                         //envoi message
+                        for(int i = 0; i < actuel; i++){
+                            
+                            if(send(joueurs[i].mysocket, buffer, strlen(buffer), 0) < 0){
+                                perror("send()");
+                                exit(errno);
+                            }
+
+                        }
+                        printf("message");
                     } else {
                         //envoi message
+                        char message[BUFFER_SIZE];
+                        strncpy(message, joueur.pseudo, BUFFER_SIZE - 1);
+                        strncat(message, " : ", BUFFER_SIZE - 1);
+                        strncat(message, buffer, BUFFER_SIZE - 1);
+                        for(int i = 0; i < actuel; i++){
+                            
+                            if(send(joueurs[i].mysocket, message, strlen(message), 0) < 0){
+                                perror("send()");
+                                exit(errno);
+                            }
+
+                        }
+                        printf("message");
                     }
                     break;
                 }
