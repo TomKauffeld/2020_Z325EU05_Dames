@@ -8,11 +8,18 @@
 #include <string.h>
 
 
+void server_treat_on_end_game(Login* login)
+{
+	send_message_error(login->socket, ERROR_PARTIE_NON_TROUVE);
+}
+
 boolean server_treat_message(ServerState* serverState, int socket)
 {
 	boolean result;
 	uint8_t messageType;
-	read_socket(&messageType, 1, 1, socket);
+	int read = read_socket(&messageType, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 	switch (messageType)
 	{
 	case CM_CREATION_DE_COMPTE:
@@ -89,8 +96,12 @@ boolean server_treat_message(ServerState* serverState, int socket)
 		break;
 	}
 	if (!result)
-		return send_message_error(socket, ERROR_GENERIQUE);
-	return TRUE;
+	{
+		result = send_message_error(socket, ERROR_GENERIQUE);
+		if (!result)
+			server_remove_login(serverState, socket, server_treat_on_end_game);
+	}
+	return result;
 }
 
 
@@ -139,12 +150,17 @@ boolean server_treat_create_account(ServerState* serverState, int socket)
 
 boolean server_treat_login_account(ServerState* serverState, int socket)
 {
+	int read;
 	uint8_t usernameLength, passwordLength;
 	char* username;
 	char* password;
 
-	read_socket(&usernameLength, 1, 1, socket);
-	read_socket(&passwordLength, 1, 1, socket);
+	read = read_socket(&usernameLength, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
+	read = read_socket(&passwordLength, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 
 	if (usernameLength == 0 || passwordLength == 0)
 		return send_message_error(socket, ERROR_MESSAGE_NON_VALIDE);
@@ -159,8 +175,12 @@ boolean server_treat_login_account(ServerState* serverState, int socket)
 		free(username);
 		return FALSE;
 	}
-	read_socket(username, 1, usernameLength, socket);
-	read_socket(password, 1, passwordLength, socket);
+	read = read_socket(username, 1, usernameLength, socket);
+	if (read != usernameLength)
+		return FALSE;
+	read = read_socket(password, 1, passwordLength, socket);
+	if (read != passwordLength)
+		return FALSE;
 	username[usernameLength] = 0;
 	password[passwordLength] = 0;
 	
@@ -199,9 +219,12 @@ boolean server_treat_create_game(ServerState* serverState, int socket)
 
 boolean server_treat_join_game(ServerState* serverState, int socket)
 {
+	int read;
 	uint8_t game_id;
 	uint8_t mapBuffer[50];
-	read_socket(&game_id, 1, 1, socket);
+	read = read_socket(&game_id, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 	GameState* game = server_join_game(serverState, socket, game_id);
 	if (game == NULL)
 		return send_message_error(socket, ERROR_PARTIE_NON_TROUVE);
@@ -215,9 +238,12 @@ boolean server_treat_join_game(ServerState* serverState, int socket)
 
 boolean server_treat_spectate(ServerState* serverState, int socket)
 {
+	int read;
 	uint8_t game_id;
 	uint8_t mapBuffer[50];
-	read_socket(&game_id, 1, 1, socket);
+	read = read_socket(&game_id, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 	GameState* game = server_spectate_game(serverState, socket, game_id);
 	if (game == NULL)
 		return send_message_error(socket, ERROR_PARTIE_NON_TROUVE);
@@ -258,17 +284,21 @@ boolean server_treat_search(ServerState* serverState, int socket)
 
 boolean server_treat_execute_turn(ServerState* serverState, int socket)
 {
-	int i;
+	int i, read;
 	uint8_t nbPositions;
 	uint8_t* positions;
 	GameState* game = server_get_game(serverState, socket);
-	read_socket(&nbPositions, 1, 1, socket);
+	read = read_socket(&nbPositions, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 	if (nbPositions == 0)
 		return FALSE;
 	positions = (uint8_t*)malloc(nbPositions);
 	if (positions == NULL)
 		return FALSE;
-	read_socket(positions, 1, nbPositions, socket);
+	read = read_socket(positions, 1, nbPositions, socket);
+	if (read != nbPositions)
+		return FALSE;
 	if (game == NULL || game->player2 == NULL)
 		return send_message_error(socket, ERROR_MESSAGE_NON_VALIDE);
 	if (game->turn == 1 && game->player1->socket != socket)

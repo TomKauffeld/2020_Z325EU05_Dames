@@ -9,15 +9,16 @@
 
 boolean send_message(int socket, uint8_t messageType, void* data, unsigned long dataSize)
 {
+	unsigned long dataSend;
 	uint8_t* message = (uint8_t*)malloc(dataSize + 1);
 	if (message == NULL)
 		return FALSE;
 	message[0] = messageType;
 	if (dataSize > 0)
 		memcpy(message + 1, data, dataSize);
-	write_socket(message, dataSize + 1, 1, socket);
+	dataSend = write_socket(message, dataSize + 1, 1, socket);
 	free(message);
-	return TRUE;
+	return dataSend == dataSize + 1;
 }
 
 boolean send_message_ping(int socket)

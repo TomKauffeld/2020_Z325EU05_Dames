@@ -18,18 +18,19 @@
 
 
 
-#define BUFFER_SIZE 1024
-#define MAX_JOUEURS 3
+#define MAX_WAITING 3
+#define MAX_JOUEURS 200
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
 void server(void){
 
-    int mysocket;
+    int mysocket, i;
     SOCKADDR_IN csin = { 0 };
-    int running = 1, actuel = 0, max; 
+    int running = 1, max; 
     int sockets[MAX_JOUEURS];
+    memset(sockets, 0, sizeof(int) * MAX_JOUEURS);
     ServerState *serverState = server_init();
 
 
@@ -50,7 +51,7 @@ void server(void){
         exit(errno);
     }
 
-    if(listen(mysocket, MAX_JOUEURS) == -1){
+    if(listen(mysocket, MAX_WAITING) == -1){
         perror("listen()");
         exit(errno);
     }
@@ -69,9 +70,9 @@ void server(void){
         FD_SET(mysocket, &rdfs);
 
             
-        for(int i = 0; i < actuel; i++){
-            FD_SET(sockets[i], &rdfs);
-
+        for(i = 0; i < MAX_JOUEURS; i++){
+            if (sockets[i] > 0)
+                FD_SET(sockets[i], &rdfs);
         }
 
         if(select(max + 1, &rdfs, NULL, NULL, NULL) == -1){
@@ -98,16 +99,20 @@ void server(void){
 
             FD_SET(csock, &rdfs);
 
-            sockets[actuel] = csock;
-            actuel++;
+            for (i = 0; i < MAX_JOUEURS; i++)
+                if (sockets[i] <= 0)
+                {
+                    sockets[i] = csock;
+                    break;
+                }
         } else {
-            for(int i = 0; i < actuel; i++){
+            for(i = 0; i < MAX_JOUEURS; i++){
                     
-                if(FD_ISSET(sockets[i], &rdfs)){
+                if(sockets[i] > 0 && FD_ISSET(sockets[i], &rdfs)){
                     
                     if(!server_treat_message(serverState, sockets[i])){
-                        perror("server_treat_message()");
-                        exit(errno);
+                        close(sockets[i]);
+                        sockets[i] = -1;
                     }
                     
                 }
@@ -115,8 +120,9 @@ void server(void){
         }
     }
 
-    for(int i = 0; i < actuel; i++){
-        close(sockets[i]);
+    for(int i = 0; i < MAX_JOUEURS; i++){
+        if (sockets[i] > 0)
+            close(sockets[i]);
     }
     close(mysocket);
     server_destroy(serverState);
