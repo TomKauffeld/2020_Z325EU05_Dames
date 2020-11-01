@@ -7,6 +7,13 @@
 #define PING_OK 1
 #define PING_WAIT 0
 
+typedef struct game {
+	uint8_t id;
+	uint8_t status;
+	uint8_t name_length;
+	char* name;
+};
+
 
 typedef struct clientState {
 	Map* map;
@@ -17,6 +24,8 @@ typedef struct clientState {
 	uint8_t* pendingPositions;
 	uint8_t nbPendingPositions;
 	char* pendingUsername;
+	struct game* availableGames;
+	int nbAvailableGames;
 } ClientState;
 
 

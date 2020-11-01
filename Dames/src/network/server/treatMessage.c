@@ -190,6 +190,7 @@ bool server_treat_spectate(ServerState* serverState, int socket)
 
 bool server_treat_search(ServerState* serverState, int socket)
 {
+	bool result;
 	char gameName[UINT8_MAX];
 	int i;
 	uint8_t nbGames;
@@ -213,7 +214,9 @@ bool server_treat_search(ServerState* serverState, int socket)
 			games[nbGames].name_length = strlen(gameName);
 			nbGames++;
 		}
-	return send_message_list_games(socket, games, nbGames);
+	result = send_message_list_games(socket, games, nbGames);
+	free(games);
+	return result;
 }
 
 bool server_treat_execute_turn(ServerState* serverState, int socket)

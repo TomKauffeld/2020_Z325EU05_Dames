@@ -84,6 +84,40 @@ bool client_treat_message_sync(ClientState* clientState, int socket)
 	return true;
 }
 
+bool client_treat_message_list_games(ClientState* clientState, int socket)
+{
+	int i;
+	uint8_t nbGames;
+	fread(&nbGames, 1, 1, socket);
+	if (clientState->availableGames != NULL)
+	{
+		for (i = 0; i < clientState->nbAvailableGames; i++)
+			free(clientState->availableGames[i].name);
+		free(clientState->availableGames);
+		clientState->availableGames = NULL;
+		clientState->nbAvailableGames = 0;
+	}
+	if (nbGames < 1)
+		return true;
+	clientState->availableGames = (struct game*)malloc(sizeof(struct game) * nbGames);
+	clientState->nbAvailableGames = nbGames;
+	for (i = 0; i < nbGames; i++)
+	{
+		fread(&clientState->availableGames[i].id, 1, 1, socket);
+		fread(&clientState->availableGames[i].status, 1, 1, socket);
+		fread(&clientState->availableGames[i].name_length, 1, 1, socket);
+		clientState->availableGames[i].name = (char*)malloc(clientState->availableGames[i].name_length + 1);
+		if (clientState->availableGames[i].name != NULL)
+		{
+			fread(clientState->availableGames[i].name, 1, clientState->availableGames[i].name_length, socket);
+			clientState->availableGames[i].name[clientState->availableGames[i].name_length] = 0;
+		}
+		else
+			fseek(socket, clientState->availableGames[i].name_length, SEEK_CUR);
+	}
+	return true;
+}
+
 bool client_treat_message_guest_name(ClientState* clientState, int socket)
 {
 	uint8_t usernameLength;
