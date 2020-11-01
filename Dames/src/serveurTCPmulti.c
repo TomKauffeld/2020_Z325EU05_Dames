@@ -73,6 +73,7 @@ void server(void){
             
         for(int i = 0; i < actuel; i++){
             FD_SET(joueurs[i].mysocket, &rdfs);
+
         }
 
         if(select(max + 1, &rdfs, NULL, NULL, NULL) == -1){
@@ -80,12 +81,11 @@ void server(void){
             exit(errno);
         }
 
+        
             
         if(FD_ISSET(STDIN_FILENO, &rdfs)){
-        
             break;
-        }
-        else if(FD_ISSET(mysocket, &rdfs)){
+        } else if(FD_ISSET(mysocket, &rdfs)){
         
             
             socklen_t sinsize = sizeof csin;
@@ -116,11 +116,10 @@ void server(void){
                     
                 if(FD_ISSET(joueurs[i].mysocket, &rdfs)){
                     
-                    if(!server_treat_message(serverState, joueurs[1].mysocket)){
+                    if(!server_treat_message(serverState, joueurs[i].mysocket)){
                         perror("server_treat_message()");
                         exit(errno);
                     }
-
                     
                 }
             }
