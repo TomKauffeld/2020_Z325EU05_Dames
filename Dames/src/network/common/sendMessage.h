@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include "../../utils/bool.h"
 
-bool send_message(int socket, uint8_t messageType, void* data, size_t dataSize);
+bool send_message(int socket, uint8_t messageType, void* data, unsigned long dataSize);
 
 bool send_message_ping(int socket);
 

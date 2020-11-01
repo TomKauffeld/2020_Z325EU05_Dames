@@ -44,6 +44,9 @@ bool server_treat_message(ServerState* serverState, int socket)
 	case CM_PING:
 		result = server_treat_ping(serverState, socket);
 		break;
+	case CM_PONG:
+		result = true;
+		break;
 	default:
 		result = send_message_error(socket, ERROR_MESSAGE_NON_VALIDE);
 		break;
@@ -232,7 +235,7 @@ bool server_treat_execute_turn(ServerState* serverState, int socket)
 		return send_message_error(socket, ERROR_MESSAGE_NON_VALIDE);
 	if (game->turn == 2 && game->player2->socket != socket)
 		return send_message_error(socket, ERROR_MESSAGE_NON_VALIDE);
-	if (map_turn(game->map, positions, nbPositions))
+	if (!map_turn(game->map, positions, nbPositions))
 		return send_message_error(socket, ERROR_COUP_NON_VALIDE);
 	if (game->turn == 1)
 	{

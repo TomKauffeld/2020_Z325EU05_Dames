@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-bool send_message(int socket, uint8_t messageType, void* data, size_t dataSize)
+bool send_message(int socket, uint8_t messageType, void* data, unsigned long dataSize)
 {
 	uint8_t* message = (uint8_t*)malloc(dataSize + 1);
 	if (message == NULL)
