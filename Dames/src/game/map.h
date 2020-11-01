@@ -60,17 +60,7 @@ Vector map_location_to_vector(uint8_t location);
 /// </summary>
 /// <param name="pos">the vector to convert</param>
 /// <returns>the location, or 0 if the vector is an invalid position</returns>
-uint8_t map_vector_to_location(Vector pos)
-{
-	uint8_t location;
-	if (pos.y % 2 == pos.x % 2)
-		return 0;
-	if (pos.y < 0 || pos.x < 0 || pos.x >= 10 || pos.y >= 10)
-		return 0;
-	location = pos.y * 5 + pos.x / 2 + 1;
-	if (location < 1 || location > MAP_SIZE)
-		return 0;
-	return location;;
+uint8_t map_vector_to_location(Vector pos);
 
 /// <summary>
 /// validates a turn (multiple moves) and returns the captures this move would make
