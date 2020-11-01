@@ -30,12 +30,14 @@ int server_get_game_index(ServerState* serverState, int socket)
 	int i, j;
 	for (i = 0; i < serverState->gamesSize; i++)
 		if (serverState->games[i] != NULL)
+		{
 			if (serverState->games[i]->player1->socket == socket || (serverState->games[i]->player2 != NULL && serverState->games[i]->player2->socket == socket))
 				return i;
 			else
 				for (j = 0; j < MAX_SPECTATORS; j++)
 					if (serverState->games[i]->spectators[j] != NULL && serverState->games[i]->spectators[j]->socket == socket)
-						return serverState->games[i];
+						return i;
+		}
 	return -1;
 }
 
@@ -121,16 +123,16 @@ void server_remove_login(ServerState* serverState, int socket, server_on_end_gam
 		}
 }
 
-bool server_is_username_taken(ServerState* serverState, char* username)
+boolean server_is_username_taken(ServerState* serverState, char* username)
 {
 	int i;
 	for (i = 0; i < serverState->nbAccounts; i++)
 		if (strcmp(serverState->accounts[i].username, username) == 0)
-			return true;
-	return false;
+			return TRUE;
+	return FALSE;
 }
 
-bool server_add_account(ServerState* serverState, char* username, char* password, int socket)
+boolean server_add_account(ServerState* serverState, char* username, char* password, int socket)
 {
 	Login* login = server_get_login(serverState, socket);
 	BYTE hash[SHA256_BLOCK_SIZE];
@@ -140,28 +142,28 @@ bool server_add_account(ServerState* serverState, char* username, char* password
 	sha256_final(&ctx, hash);
 	Account* tmpAccounts;
 	if (login != NULL)
-		return false;
+		return FALSE;
 	if (serverState->accounts != NULL)
 		tmpAccounts = (Account*)realloc(serverState->accounts, (serverState->nbAccounts + 1) * sizeof(Account));
 	else
 		tmpAccounts = (Account*)malloc(sizeof(Account));
 	if (tmpAccounts == NULL)
-		return false;
+		return FALSE;
 	memcpy(tmpAccounts[serverState->nbAccounts].password, hash, SHA256_BLOCK_SIZE);
 	tmpAccounts[serverState->nbAccounts].username = username;
 	serverState->accounts = tmpAccounts;
 	serverState->nbAccounts++;
-	return server_connect(serverState, username, false, socket);
+	return server_connect(serverState, username, FALSE, socket);
 }
 
-bool server_connect(ServerState* serverState, char* username, bool isGuest, int socket)
+boolean server_connect(ServerState* serverState, char* username, boolean isGuest, int socket)
 {
 	Login* login = server_get_login(serverState, socket);
 	Login** tmpLogins;
 	int free_index = -1;
 	int i;
 	if (login != NULL)
-		return false;
+		return FALSE;
 	for (i = 0; i < serverState->loginsSize; i++)
 		if (serverState->logins[i] == NULL)
 		{
@@ -175,7 +177,7 @@ bool server_connect(ServerState* serverState, char* username, bool isGuest, int 
 		else
 			tmpLogins = (Login**)malloc(sizeof(Login*));
 		if (tmpLogins == NULL)
-			return false;
+			return FALSE;
 		serverState->logins = tmpLogins;
 		free_index = serverState->loginsSize++;
 	}
@@ -183,7 +185,7 @@ bool server_connect(ServerState* serverState, char* username, bool isGuest, int 
 	return serverState->logins[free_index] != NULL;
 }
 
-bool server_check_username_password(ServerState* serverState, char* username, char* password)
+boolean server_check_username_password(ServerState* serverState, char* username, char* password)
 {
 	BYTE hash[SHA256_BLOCK_SIZE];
 	SHA256_CTX ctx;
@@ -194,10 +196,10 @@ bool server_check_username_password(ServerState* serverState, char* username, ch
 	for (i = 0; i < serverState->nbAccounts; i++)
 		if (strcmp(serverState->accounts[i].username, username) == 0)
 			return memcmp(serverState->accounts[i].password, hash, SHA256_BLOCK_SIZE) == 0;
-	return false;
+	return FALSE;
 }
 
-bool server_create_new_game(ServerState* serverState, int socket)
+boolean server_create_new_game(ServerState* serverState, int socket)
 {
 	Login* login = server_get_login(serverState, socket);
 	int index = server_get_game_index(serverState, socket);
@@ -206,9 +208,9 @@ bool server_create_new_game(ServerState* serverState, int socket)
 	int free_index = -1;
 	int i;
 	if (index >= 0)
-		return false;
+		return FALSE;
 	if (login == NULL)
-		return false;
+		return FALSE;
 	for (i = 0; i < serverState->gamesSize; i++)
 		if (serverState->games[i] == NULL)
 		{
@@ -222,18 +224,18 @@ bool server_create_new_game(ServerState* serverState, int socket)
 		else
 			tmpGames = (GameState**)malloc(sizeof(GameState*));
 		if (tmpGames == NULL)
-			return false;
+			return FALSE;
 		serverState->games = tmpGames;
 		free_index = serverState->gamesSize++;
 	}
 	tmpGame = (GameState*)malloc(sizeof(GameState));
 	if (tmpGame == NULL)
-		return false;
+		return FALSE;
 	tmpGame->map = map_init();
 	if (tmpGame->map == NULL)
 	{
 		free(tmpGame);
-		return false;
+		return FALSE;
 	}
 	tmpGame->player1 = login;
 	tmpGame->player2 = NULL;
@@ -241,7 +243,7 @@ bool server_create_new_game(ServerState* serverState, int socket)
 	for (i = 0; i < MAX_SPECTATORS; i++)
 		tmpGame->spectators[i] = NULL;
 	serverState->games[free_index] = tmpGame;
-	return true;
+	return TRUE;
 }
 
 void server_destroy(ServerState* serverState)

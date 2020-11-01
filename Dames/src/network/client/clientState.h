@@ -7,7 +7,7 @@
 #define PING_OK 1
 #define PING_WAIT 0
 
-typedef struct game {
+struct game {
 	uint8_t id;
 	uint8_t status;
 	uint8_t name_length;

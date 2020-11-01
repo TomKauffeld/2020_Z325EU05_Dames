@@ -39,6 +39,27 @@
     <ClCompile Include="src\network\common\sendMessage.c">
       <Filter>src\network\common</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\server\server.c">
+      <Filter>src\network\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\sha256.c">
+      <Filter>src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\server\login.c">
+      <Filter>src\network\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\server\serverTreatMessage.c">
+      <Filter>src\network\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\server\serverSendMessage.c">
+      <Filter>src\network\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\client\clientTreatMessage.c">
+      <Filter>src\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\client\clientSendMessage.c">
+      <Filter>src\network\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Header.h">
@@ -53,14 +74,41 @@
     <ClInclude Include="src\utils\vector.h">
       <Filter>src\utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\network\server\treatMessage.h">
-      <Filter>src\network\server</Filter>
-    </ClInclude>
     <ClInclude Include="src\network\common\sendMessage.h">
       <Filter>src\network\common</Filter>
     </ClInclude>
     <ClInclude Include="src\network\common\codeMessages.h">
       <Filter>src\network\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\server\server.h">
+      <Filter>src\network\server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\sha256.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\server\login.h">
+      <Filter>src\network\server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\client.h">
+      <Filter>src\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\clientState.h">
+      <Filter>src\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\common\network.h">
+      <Filter>src\network\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\server\serverTreatMessage.h">
+      <Filter>src\network\server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\server\serverSendMessage.h">
+      <Filter>src\network\server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\clientTreatMessage.h">
+      <Filter>src\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\clientSendMessage.h">
+      <Filter>src\network\client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -47,15 +47,15 @@ GameState* server_spectate_game(ServerState* serverState, int socket, uint8_t ga
 
 void server_remove_login(ServerState* serverState, int socket, server_on_end_game on_end_game);
 
-bool server_is_username_taken(ServerState* serverState, char* username);
+boolean server_is_username_taken(ServerState* serverState, char* username);
 
-bool server_add_account(ServerState* serverState, char* username, char* password, int socket);
+boolean server_add_account(ServerState* serverState, char* username, char* password, int socket);
 
-bool server_connect(ServerState* serverState, char* username, bool isGuest, int socket);
+boolean server_connect(ServerState* serverState, char* username, boolean isGuest, int socket);
 
-bool server_check_username_password(ServerState* serverState, char* username, char* password);
+boolean server_check_username_password(ServerState* serverState, char* username, char* password);
 
-bool server_create_new_game(ServerState* serverState, int socket);
+boolean server_create_new_game(ServerState* serverState, int socket);
 
 void server_destroy(ServerState* serverState);
 

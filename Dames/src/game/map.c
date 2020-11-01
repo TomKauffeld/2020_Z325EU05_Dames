@@ -108,29 +108,29 @@ uint8_t map_vector_to_location(Vector pos)
 /// <param name="captures">(out) a buffer for the list of captures</param>
 /// <param name="maxCaptures">the max the buffer can hold</param>
 /// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
-/// <returns>returns true if the turn is valid, on error and/or invalid moves, it returns false</returns>
-bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures)
+/// <returns>returns TRUE if the turn is valid, on error and/or invalid moves, it returns FALSE</returns>
+boolean map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures)
 {
 	uint8_t tmpCaptures, i, j, k;
-	bool result;
+	boolean result;
 	if (nbPositions < 2)
-		return false;
+		return FALSE;
 	*nbCaptures = 0;
 
 	for (i = 0; i < nbPositions - 1; i++)
 	{
 		for (j = 0; j < *nbCaptures; j++)
 			if (captures[j] == positions[i + 1])
-				return false;
+				return FALSE;
 		result = map_validate_move(map, positions[i], positions[i + 1], captures + *nbCaptures, MAX_CAPTURES - *nbCaptures, &tmpCaptures);
 		if (!result)
-			return false;
+			return FALSE;
 		for (j = 0; j < *nbCaptures; j++)
 			for (k = *nbCaptures; k < *nbCaptures + tmpCaptures; k++)
 				if (captures[j] == captures[k])
-					return false;
+					return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
 /// <summary>
@@ -143,23 +143,23 @@ bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_
 /// <param name="maxCaptures"></param>
 /// <param name="nbCaptures"></param>
 /// <returns></returns>
-bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, uint8_t maxCaptures, uint8_t * nbCaptures)
+boolean map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, uint8_t maxCaptures, uint8_t * nbCaptures)
 {
 	int i;
 	Vector posFrom, posTo, dist, diff, tmp, offset;
 	uint8_t location;
 	if (captures == NULL && maxCaptures > 0)
-		return false;
+		return FALSE;
 	if (nbCaptures == NULL && maxCaptures > 0)
-		return false;
+		return FALSE;
 	if (from < 1 || from > MAP_SIZE)
-		return false;
+		return FALSE;
 	if (to < 1 || to > MAP_SIZE)
-		return false;
+		return FALSE;
 	if (map[from - 1] == EMPTY)
-		return false;
+		return FALSE;
 	if (map[to - 1] != EMPTY)
-		return false;
+		return FALSE;
 	if (nbCaptures != NULL)
 		(*nbCaptures) = 0;
 
@@ -169,15 +169,15 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 	diff = vector_min(posTo, posFrom);
 
 	if (dist.x != dist.y)
-		return false;
-	if (map[from - 1] & PIECE == MEN)
+		return FALSE;
+	if ((map[from - 1] & PIECE) == MEN)
 	{
 		if (dist.x == 1)
 		{
 			if (map[from - 1] == PLAYER_2_MEN && diff.y > 0)
-				return false;
+				return FALSE;
 			if (map[from - 1] == PLAYER_1_MEN && diff.y < 0)
-				return false;
+				return FALSE;
 		}
 		else if (dist.x == 2)
 		{
@@ -186,15 +186,15 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 			tmp = vector_add(posFrom, tmp);
 			location = map_vector_to_location(tmp);
 			if (map[location - 1] == EMPTY)
-				return false;
-			if (map[location - 1] & PLAYER == map[from - 1] & PLAYER)
-				return false;
+				return FALSE;
+			if ((map[location - 1] & PLAYER) == (map[from - 1] & PLAYER))
+				return FALSE;
 
 			if (nbCaptures != NULL && *nbCaptures < maxCaptures)
 				captures[(*nbCaptures)++] = location;
 		}
 		else
-			return false;
+			return FALSE;
 	}
 	else
 	{
@@ -205,13 +205,13 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 			tmp = vector_mult(offset, i);
 			tmp = vector_add(posFrom, tmp);
 			location = map_vector_to_location(tmp);
-			if (map[location - 1] & PLAYER == map[from - 1] & PLAYER)
-				return false;
+			if ((map[location - 1] & PLAYER) == (map[from - 1] & PLAYER))
+				return FALSE;
 			if (map[location - 1] != EMPTY && nbCaptures != NULL && *nbCaptures < maxCaptures)
 				captures[(*nbCaptures)++] = location;
 		}
 	}
-	return true;
+	return TRUE;
 }
 
 /// <summary>
@@ -220,14 +220,14 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 /// <param name="map">the map pointer</param>
 /// <param name="positions">a list of positions</param>
 /// <param name="nbPositions">the number of positions in the list</param>
-/// <returns>true if the turn is executes, false otherwise</returns>
-bool map_turn(Map* map, uint8_t* positions, uint8_t nbPositions)
+/// <returns>TRUE if the turn is executes, FALSE otherwise</returns>
+boolean map_turn(Map* map, uint8_t* positions, uint8_t nbPositions)
 {
 	uint8_t captures[MAX_CAPTURES];
 	uint8_t nbCaptures = 0;
 	uint8_t to, from, i;
 	if (!map_validate_turn(map, positions, nbPositions, captures, MAX_CAPTURES, &nbCaptures))
-		return false;
+		return FALSE;
 
 	from = positions[0];
 	to = positions[nbPositions - 1];
@@ -235,15 +235,15 @@ bool map_turn(Map* map, uint8_t* positions, uint8_t nbPositions)
 	map[to - 1] = map[from - 1];
 	map[from - 1] = 0;
 
-	if ((map[to - 1] & PLAYER_2_MEN > 0) && to <= 5)
+	if ((map[to - 1] & PLAYER_2_MEN) > 0 && to <= 5)
 		map[to - 1] = PLAYER_2_KING;
-	else if ((map[to - 1] & PLAYER_1_MEN > 0) && to >= 46)
+	else if ((map[to - 1] & PLAYER_1_MEN) > 0 && to >= 46)
 		map[to - 1] = PLAYER_1_KING;
 
 	for (i = 0; i < nbCaptures; i++)
 		map[captures[i] - 1] = EMPTY;
 
-	return true;
+	return TRUE;
 }
 
 /// <summary>

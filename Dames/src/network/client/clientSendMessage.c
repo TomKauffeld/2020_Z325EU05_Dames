@@ -1,15 +1,15 @@
-#include "sendMessage.h"
+#include "clientSendMessage.h"
 #include "../common/codeMessages.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-bool send_message_create_or_login(int socket, uint8_t message_type, char* username, char* password)
+boolean send_message_create_or_login(int socket, uint8_t message_type, char* username, char* password)
 {
-	bool result;
+	boolean result;
 	uint8_t* data = (uint8_t*)malloc(strlen(username) + strlen(password) + 2);
 	if (data == NULL)
-		return false;
+		return FALSE;
 	data[0] = strlen(username);
 	data[1] = strlen(password);
 	memcpy(data + 2, username, strlen(username));
@@ -19,42 +19,42 @@ bool send_message_create_or_login(int socket, uint8_t message_type, char* userna
 	return result;
 }
 
-bool send_message_create_account(int socket, char* username, char* password)
+boolean send_message_create_account(int socket, char* username, char* password)
 {
 	return send_message_create_or_login(socket, CM_CREATION_DE_COMPTE, username, password);
 }
 
-bool send_message_login_account(int socket, char* username, char* password)
+boolean send_message_login_account(int socket, char* username, char* password)
 {
 	return send_message_create_or_login(socket, CM_CONNEXION_AU_COMPTE, username, password);
 }
 
-bool send_message_login_guest(int socket)
+boolean send_message_login_guest(int socket)
 {
 	return send_message(socket, CM_CONNEXION_SPECTATEUR, NULL, 0);
 }
 
-bool send_message_create_game(int socket)
+boolean send_message_create_game(int socket)
 {
 	return send_message(socket, CM_CREATION_PARTIE, NULL, 0);
 }
 
-bool send_message_join_game(int socket, uint8_t game_id)
+boolean send_message_join_game(int socket, uint8_t game_id)
 {
 	return send_message(socket, CM_CONNEXION_PARTIE, &game_id, 1);
 }
 
-bool send_message_spectate_game(int socket, uint8_t game_id)
+boolean send_message_spectate_game(int socket, uint8_t game_id)
 {
 	return send_message(socket, CM_CONNEXION_SPECTATEUR, &game_id, 1);
 }
 
-bool send_message_get_games(int socket)
+boolean send_message_get_games(int socket)
 {
 	return send_message(socket, CM_LISTE_PARTIES, NULL, 0);
 }
 
-bool send_message_req_sync(int socket)
+boolean send_message_req_sync(int socket)
 {
 	return send_message(socket, CM_REQ_SYNC, NULL, 0);
 }

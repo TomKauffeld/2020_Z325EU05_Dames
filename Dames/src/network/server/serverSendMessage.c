@@ -1,10 +1,10 @@
-#include "sendMessage.h"
+#include "serverSendMessage.h"
 #include "../common/codeMessages.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-bool send_message_sync(int socket, uint8_t player, void* map)
+boolean send_message_sync(int socket, uint8_t player, void* map)
 {
 	uint8_t data[51];
 	data[0] = player;
@@ -12,18 +12,18 @@ bool send_message_sync(int socket, uint8_t player, void* map)
 	return send_message(socket, CM_SYNC, data, 51);
 }
 
-bool send_message_list_games(int socket, struct game* games, uint8_t nbGames)
+boolean send_message_list_games(int socket, struct game* games, uint8_t nbGames)
 {
 	uint8_t* data;
 	size_t dataSize = 1;
 	int i, offset = 1;
-	bool result;
+	boolean result;
 	for (i = 0; i < nbGames; i++)
 		dataSize += games[i].name_length + 3;
 
 	data = (uint8_t*)malloc(dataSize);
 	if (data == NULL)
-		return false;
+		return FALSE;
 	
 	data[0] = nbGames;
 	for (i = 0; i < nbGames; i++)
@@ -40,12 +40,12 @@ bool send_message_list_games(int socket, struct game* games, uint8_t nbGames)
 	return result;
 }
 
-bool send_message_guest_name(int socket, char* name)
+boolean send_message_guest_name(int socket, char* name)
 {
-	bool result;
+	boolean result;
 	uint8_t* data = (uint8_t*)malloc(strlen(name) + 1);
 	if (data == NULL)
-		return false;
+		return FALSE;
 	data[0] = strlen(name);
 	memcpy(data + 1, name, strlen(name));
 
@@ -54,12 +54,12 @@ bool send_message_guest_name(int socket, char* name)
 	return result;
 }
 
-bool send_message_ok(int socket)
+boolean send_message_ok(int socket)
 {
 	return send_message(socket, CM_OK, NULL, 0);
 }
 
-bool send_message_error(int socket, uint8_t error_type)
+boolean send_message_error(int socket, uint8_t error_type)
 {
 	return send_message(socket, CM_ERREUR, &error_type, 1);
 }

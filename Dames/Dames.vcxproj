@@ -77,17 +77,33 @@
   <ItemGroup>
     <ClCompile Include="src\clientTCPmulti.c" />
     <ClCompile Include="src\game\map.c" />
+    <ClCompile Include="src\network\client\clientSendMessage.c" />
+    <ClCompile Include="src\network\client\clientTreatMessage.c" />
     <ClCompile Include="src\network\common\sendMessage.c" />
+    <ClCompile Include="src\network\server\login.c" />
+    <ClCompile Include="src\network\server\serverSendMessage.c" />
+    <ClCompile Include="src\network\server\server.c" />
+    <ClCompile Include="src\network\server\serverTreatMessage.c" />
     <ClCompile Include="src\serveurTCPmulti.c" />
+    <ClCompile Include="src\utils\sha256.c" />
     <ClCompile Include="src\utils\vector.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\map.h" />
     <ClInclude Include="src\Header.h" />
+    <ClInclude Include="src\network\client\client.h" />
+    <ClInclude Include="src\network\client\clientState.h" />
+    <ClInclude Include="src\network\client\clientSendMessage.h" />
+    <ClInclude Include="src\network\client\clientTreatMessage.h" />
     <ClInclude Include="src\network\common\codeMessages.h" />
+    <ClInclude Include="src\network\common\network.h" />
     <ClInclude Include="src\network\common\sendMessage.h" />
-    <ClInclude Include="src\network\server\treatMessage.h" />
+    <ClInclude Include="src\network\server\login.h" />
+    <ClInclude Include="src\network\server\serverSendMessage.h" />
+    <ClInclude Include="src\network\server\server.h" />
+    <ClInclude Include="src\network\server\serverTreatMessage.h" />
     <ClInclude Include="src\utils\bool.h" />
+    <ClInclude Include="src\utils\sha256.h" />
     <ClInclude Include="src\utils\vector.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

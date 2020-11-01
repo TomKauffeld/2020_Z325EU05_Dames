@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Login* login_init(char* username, bool isGuest, int socket)
+Login* login_init(char* username, boolean isGuest, int socket)
 {
 	Login* login = (Login*)malloc(sizeof(Login));
 	if (login == NULL)

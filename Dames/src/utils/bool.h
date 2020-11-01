@@ -2,9 +2,9 @@
 #define __UTILS_BOOL_H__
 #include <inttypes.h>
 
-typedef uint8_t bool;
+typedef uint8_t boolean;
 
-#define true 0x01
-#define false 0x00
+#define TRUE 0x01
+#define FALSE 0x00
 
 #endif

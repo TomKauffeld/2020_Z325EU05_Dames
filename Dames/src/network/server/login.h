@@ -6,11 +6,11 @@
 
 typedef struct login {
 	char username[1 + UINT8_MAX];
-	bool isGuest;
+	boolean isGuest;
 	int socket;
 } Login;
 
-Login* login_init(char* username, bool isGuest, int socket);
+Login* login_init(char* username, boolean isGuest, int socket);
 
 void login_destroy(Login* login);
 

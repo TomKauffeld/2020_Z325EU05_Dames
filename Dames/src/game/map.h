@@ -71,8 +71,8 @@ uint8_t map_vector_to_location(Vector pos);
 /// <param name="captures">(out) a buffer for the list of captures</param>
 /// <param name="maxCaptures">the max the buffer can hold</param>
 /// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
-/// <returns>returns true if the turn is valid, on error and/or invalid moves, it returns false</returns>
-bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
+/// <returns>returns TRUE if the turn is valid, on error and/or invalid moves, it returns FALSE</returns>
+boolean map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
 
 /// <summary>
 /// validates a turn (multiple moves) and returns the captures this move would make
@@ -83,8 +83,8 @@ bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_
 /// <param name="captures">(out) a buffer for the list of captures</param>
 /// <param name="maxCaptures">the max the buffer can hold</param>
 /// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
-/// <returns>returns true if the move is valid, on error and/or invalid moves, it returns false</returns>
-bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
+/// <returns>returns TRUE if the move is valid, on error and/or invalid moves, it returns FALSE</returns>
+boolean map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
 
 /// <summary>
 /// executes a turn (multiple moves)
@@ -92,8 +92,8 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, ui
 /// <param name="map">the map pointer</param>
 /// <param name="positions">a list of positions</param>
 /// <param name="nbPositions">the number of positions in the list</param>
-/// <returns>true if the turn is executes, false otherwise</returns>
-bool map_turn(Map* map, uint8_t* positions, uint8_t nbPositions);
+/// <returns>TRUE if the turn is executes, FALSE otherwise</returns>
+boolean map_turn(Map* map, uint8_t* positions, uint8_t nbPositions);
 
 /// <summary>
 /// frees the memory used by the map

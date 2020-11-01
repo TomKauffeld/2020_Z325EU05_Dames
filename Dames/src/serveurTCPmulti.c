@@ -12,14 +12,10 @@
 #include <unistd.h>
 #include <netdb.h> 
 
-#include "network/server/treatMessage.h"
+#include "network/server/serverTreatMessage.h"
 #include "network/server/server.h"
 #include "network/server/login.h"
 
-typedef struct {
-    int mysocket;
-    char pseudo[1024];
-}Joueur;
 
 
 #define BUFFER_SIZE 1024
@@ -32,9 +28,8 @@ void server(void){
 
     int mysocket;
     SOCKADDR_IN csin = { 0 };
-    char buffer[BUFFER_SIZE];
-    int running = 1, actuel = 0, max, n = 0; 
-    Joueur joueurs[MAX_JOUEURS];
+    int running = 1, actuel = 0, max; 
+    int sockets[MAX_JOUEURS];
     ServerState *serverState = server_init();
 
 
@@ -75,7 +70,7 @@ void server(void){
 
             
         for(int i = 0; i < actuel; i++){
-            FD_SET(joueurs[i].mysocket, &rdfs);
+            FD_SET(sockets[i], &rdfs);
 
         }
 
@@ -98,28 +93,19 @@ void server(void){
                 continue;
             }
 
-            n = 0;
-
-            if((n = recv(csock, buffer, BUFFER_SIZE - 1, 0)) < 0){
-                perror("recv()");
-                n = 0;
-            }
-            buffer[n] = 0;
 
             max = csock > max ? csock : max;
 
             FD_SET(csock, &rdfs);
 
-            Joueur j = { csock };
-            strncpy(j.pseudo, buffer, BUFFER_SIZE - 1);
-            joueurs[actuel] = j;
+            sockets[actuel] = csock;
             actuel++;
         } else {
             for(int i = 0; i < actuel; i++){
                     
-                if(FD_ISSET(joueurs[i].mysocket, &rdfs)){
+                if(FD_ISSET(sockets[i], &rdfs)){
                     
-                    if(!server_treat_message(serverState, joueurs[i].mysocket)){
+                    if(!server_treat_message(serverState, sockets[i])){
                         perror("server_treat_message()");
                         exit(errno);
                     }
@@ -130,7 +116,7 @@ void server(void){
     }
 
     for(int i = 0; i < actuel; i++){
-        close(joueurs[i].mysocket);
+        close(sockets[i]);
     }
     close(mysocket);
     server_destroy(serverState);
