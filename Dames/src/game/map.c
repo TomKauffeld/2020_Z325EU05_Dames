@@ -27,7 +27,7 @@ Map* map_init() {
 /// <param name="buffer">the buffer</param>
 /// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
 /// <returns>the amount of bytes used (0 if an error occured)</returns>
-size_t map_serialize(Map * map, void* buffer, size_t bufferSize)
+unsigned long map_serialize(Map * map, void* buffer, unsigned long bufferSize)
 {
 	if (bufferSize < MAP_SIZE)
 		return 0;
@@ -41,7 +41,7 @@ size_t map_serialize(Map * map, void* buffer, size_t bufferSize)
 /// <param name="buffer">the buffer</param>
 /// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
 /// <returns>the map that was serialized (or NULL if an error occured)</returns>
-Map* map_unserialize(void* buffer, size_t bufferSize)
+Map* map_unserialize(void* buffer, unsigned long bufferSize)
 {
 	Map* map;
 	int i;
