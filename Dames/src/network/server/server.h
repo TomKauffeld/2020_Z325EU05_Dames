@@ -3,27 +3,42 @@
 
 #include "../../utils/bool.h"
 #include "../../utils/sha256.h"
+#include "../../game/map.h"
+#include "login.h"
+
+#define MAX_SPECTATORS 20
+
+typedef void(*server_on_end_game(Login*));
 
 typedef struct account {
 	char* username;
 	BYTE password[SHA256_BLOCK_SIZE];
 } Account;
 
-typedef struct login {
+
+typedef struct gameState {
 	uint8_t id;
-	char username[1 + UINT8_MAX];
-	bool isGuest;
-	int socket;
-} Login;
+	Login* player1;
+	Login* player2;
+	Map* map;
+	uint8_t turn;
+	Login* spectators[MAX_SPECTATORS];
+} GameState;
 
 typedef struct serverState {
 	int nbAccounts;
-	int nblogins;
+	int loginsSize;
+	int gamesSize;
 	Account* accounts;
-	Login* logins;
+	Login** logins;
+	GameState** games;
 } ServerState;
 
 ServerState * server_init();
+
+Login* server_get_login(ServerState* serverState, int socket);
+
+void server_remove_login(ServerState* serverState, int socket, server_on_end_game on_end_game);
 
 bool server_is_username_taken(ServerState* serverState, char* username);
 

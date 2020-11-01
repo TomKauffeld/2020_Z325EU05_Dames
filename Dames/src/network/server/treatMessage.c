@@ -150,6 +150,12 @@ bool server_treat_login_guest(ServerState* serverState, int socket)
 	return send_message_guest_name(socket, username);
 }
 
+bool server_treat_create_game(ServerState* serverState, int socket)
+{
+#error NOT IMPLEMENTED
+	return false;
+}
+
 bool server_treat_ping(ServerState* serverState, int socket)
 {
 	return send_message_pong(socket);

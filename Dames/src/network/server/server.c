@@ -9,9 +9,55 @@ ServerState* server_init()
 		return NULL;
 	serverState->accounts = NULL;
 	serverState->logins = NULL;
+	serverState->games = NULL;
 	serverState->nbAccounts = 0;
-	serverState->nblogins = 0;
+	serverState->loginsSize = 0;
+	serverState->gamesSize = 0;
 	return serverState;
+}
+
+Login* server_get_login(ServerState* serverState, int socket)
+{
+	int i;
+	for (i = 0; i < serverState->loginsSize; i++)
+		if (serverState->logins[i] != NULL && serverState->logins[i]->socket == socket)
+			return serverState->logins[i];
+	return NULL;
+}
+
+void server_remove_login(ServerState* serverState, int socket, server_on_end_game on_end_game)
+{
+	int i, j;
+	for (i = 0; i < serverState->gamesSize; i++)
+		if (serverState->games[i] != NULL)
+		{
+			if (serverState->games[i]->player1->socket == socket || (serverState->games[i]->player2 != NULL && serverState->games[i]->player2->socket == socket))
+			{
+				if (serverState->games[i]->player1->socket == socket && serverState->games[i]->player2 != NULL)
+					on_end_game(serverState->games[i]->player2);
+				else if (serverState->games[i]->player2 != NULL && serverState->games[i]->player2->socket == socket)
+					on_end_game(serverState->games[i]->player1);
+				for (j = 0; j < MAX_SPECTATORS; j++)
+					if (serverState->games[i]->spectators[j] != NULL)
+						on_end_game(serverState->games[i]->spectators[j]);
+				free(serverState->games[i]);
+				serverState->games[i] = NULL;
+			}
+			else 
+			{
+				for (j = 0; j < MAX_SPECTATORS; j++)
+					if (serverState->games[i]->spectators[j] != NULL && serverState->games[i]->spectators[j]->socket == socket)
+						serverState->games[i]->spectators[j] = NULL;
+			}
+		}
+
+	for (i = 0; i < serverState->loginsSize; i++)
+		if (serverState->logins[i] != NULL && serverState->logins[i]->socket == socket)
+		{
+			login_destroy(serverState->logins[i]);
+			serverState->logins[i] = NULL;
+			break;
+		}
 }
 
 bool server_is_username_taken(ServerState* serverState, char* username)
@@ -46,21 +92,28 @@ bool server_add_account(ServerState* serverState, char* username, char* password
 
 bool server_connect(ServerState* serverState, char* username, bool isGuest, int socket)
 {
-	Login* tmpLogins;
-	if (serverState->logins != NULL)
-		tmpLogins = (Login*)realloc(serverState->logins, (serverState->nblogins + 1) * sizeof(Login));
-	else
-		tmpLogins = (Login*)malloc(sizeof(Login));
-	if (tmpLogins == NULL)
-		return false;
-	tmpLogins[serverState->nblogins].id = serverState->nblogins;
-	memset(tmpLogins[serverState->nblogins].username, 0x00, UINT8_MAX + 1);
-	strcpy(tmpLogins[serverState->nblogins].username, username);
-	tmpLogins[serverState->nblogins].isGuest = isGuest;
-	tmpLogins[serverState->nblogins].socket = socket;
-	serverState->logins = tmpLogins;
-	serverState->nblogins++;
-	return true;
+	Login** tmpLogins;
+	int free_index = -1;
+	int i;
+	for (i = 0; i < serverState->loginsSize; i++)
+		if (serverState->logins[i] == NULL)
+		{
+			free_index = i;
+			break;
+		}
+	if (free_index < 0)
+	{
+		if (serverState->logins != NULL)
+			tmpLogins = (Login**)realloc(serverState->logins, (serverState->loginsSize + 1) * sizeof(Login*));
+		else
+			tmpLogins = (Login**)malloc(sizeof(Login*));
+		if (tmpLogins == NULL)
+			return false;
+		serverState->logins = tmpLogins;
+		free_index = serverState->loginsSize++;
+	}
+	serverState->logins[free_index] = login_init(username, isGuest, socket);
+	return serverState->logins[free_index] != NULL;
 }
 
 bool server_check_username_password(ServerState* serverState, char* username, char* password)
@@ -81,13 +134,16 @@ void server_destroy(ServerState* serverState)
 {
 	int i;
 	if (serverState->logins != NULL)
+	{
+		for (i = 0; i < serverState->loginsSize; i++)
+			if (serverState->logins[i] != NULL)
+				login_destroy(serverState->logins[i]);
 		free(serverState->logins);
+	}
 	if (serverState->accounts != NULL)
 	{
 		for (i = 0; i < serverState->nbAccounts; i++)
-		{
 			free(serverState->accounts[i].username);
-		}
 		free(serverState->accounts);
 	}
 	free(serverState);
