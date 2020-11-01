@@ -24,13 +24,67 @@
 
 typedef uint8_t Map;
 
+
+/// <summary>
+/// Creates a new map
+/// </summary>
+/// <returns>a new map in the initial state</returns>
 Map* map_init();
 
+/// <summary>
+/// serializes the map into a buffer
+/// </summary>
+/// <param name="map">the map to serialize</param>
+/// <param name="buffer">the buffer</param>
+/// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
+/// <returns>the amount of bytes used (0 if an error occured)</returns>
+size_t map_serialize(Map* map, void* buffer, size_t bufferSize);
+
+/// <summary>
+/// unserialized a map from a buffer
+/// </summary>
+/// <param name="buffer">the buffer</param>
+/// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
+/// <returns>the map that was serialized (or NULL if an error occured)</returns>
+Map* map_unserialize(void* buffer, size_t bufferSize);
+
+/// <summary>
+/// validates a turn (multiple moves) and returns the captures this move would make
+/// </summary>
+/// <param name="map">the map pointer</param>
+/// <param name="positions">a list of positions</param>
+/// <param name="nbPositions">the number of positions in the list</param>
+/// <param name="captures">(out) a buffer for the list of captures</param>
+/// <param name="maxCaptures">the max the buffer can hold</param>
+/// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
+/// <returns>returns true if the turn is valid, on error and/or invalid moves, it returns false</returns>
+bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
+
+/// <summary>
+/// validates a turn (multiple moves) and returns the captures this move would make
+/// </summary>
+/// <param name="map">the map pointer</param>
+/// <param name="positions">a list of positions</param>
+/// <param name="nbPositions">the number of positions in the list</param>
+/// <param name="captures">(out) a buffer for the list of captures</param>
+/// <param name="maxCaptures">the max the buffer can hold</param>
+/// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
+/// <returns>returns true if the move is valid, on error and/or invalid moves, it returns false</returns>
 bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
 
-bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures);
+/// <summary>
+/// executes a turn (multiple moves)
+/// </summary>
+/// <param name="map">the map pointer</param>
+/// <param name="positions">a list of positions</param>
+/// <param name="nbPositions">the number of positions in the list</param>
+/// <returns>true if the turn is executes, false otherwise</returns>
+bool map_turn(Map* map, uint8_t* positions, uint8_t nbPositions);
 
+/// <summary>
+/// frees the memory used by the map
+/// </summary>
+/// <param name="map">the map pointer</param>
 void map_destroy(Map* map);
-
 
 #endif

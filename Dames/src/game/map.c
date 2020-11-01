@@ -2,8 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+#define MAP_SIZE 50
+#define MAX_CAPTURES 50
+
+/// <summary>
+/// Creates a new map
+/// </summary>
+/// <returns>a new map in the initial state</returns>
 Map* map_init() {
-	Map* map = (Map*)malloc(50);
+	Map* map = (Map*)malloc(MAP_SIZE);
 	if (map == NULL)
 		return NULL;
 	memset(map, PLAYER_1_MEN, 20);
@@ -12,6 +20,59 @@ Map* map_init() {
 	return map;
 }
 
+/// <summary>
+/// serializes the map into a buffer
+/// </summary>
+/// <param name="map">the map to serialize</param>
+/// <param name="buffer">the buffer</param>
+/// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
+/// <returns>the amount of bytes used (0 if an error occured)</returns>
+size_t map_serialize(Map * map, void* buffer, size_t bufferSize)
+{
+	if (bufferSize < MAP_SIZE)
+		return 0;
+	memcpy(buffer, map, MAP_SIZE);
+	return MAP_SIZE;
+}
+
+/// <summary>
+/// unserialized a map from a buffer
+/// </summary>
+/// <param name="buffer">the buffer</param>
+/// <param name="bufferSize">the buffer size (it should be atleast 50 bytes long)</param>
+/// <returns>the map that was serialized (or NULL if an error occured)</returns>
+Map* map_unserialize(void* buffer, size_t bufferSize)
+{
+	Map* map;
+	int i;
+	if (bufferSize < MAP_SIZE)
+		return NULL;
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		switch (((uint8_t*)buffer)[i])
+		{
+		case EMPTY:
+		case PLAYER_1_KING:
+		case PLAYER_1_MEN:
+		case PLAYER_2_KING:
+		case PLAYER_2_MEN:
+			break;
+		default:
+			return NULL;
+		}
+	}
+	map = (Map*)malloc(MAP_SIZE);
+	if (map == NULL)
+		return NULL;
+	memcpy(map, buffer, MAP_SIZE);
+	return map;
+}
+
+/// <summary>
+/// Converts a location (used by the map system) to an vector
+/// </summary>
+/// <param name="location">the location to convert</param>
+/// <returns>a vector representing the location</returns>
 Vector map_location_to_vector(uint8_t location)
 {
 	Vector pos;
@@ -20,14 +81,68 @@ Vector map_location_to_vector(uint8_t location)
 	return pos;
 }
 
+/// <summary>
+/// Converts a vector to a location (used by the map system)
+/// </summary>
+/// <param name="pos">the vector to convert</param>
+/// <returns>the location, or 0 if the vector is an invalid position</returns>
 uint8_t map_vector_to_location(Vector pos)
 {
+	uint8_t location;
 	if (pos.y % 2 == pos.x % 2)
 		return 0;
-	return pos.y * 5 + pos.x / 2 + 1;
+	if (pos.y < 0 || pos.x < 0 || pos.x >= 10 || pos.y >= 10)
+		return 0;
+	location = pos.y * 5 + pos.x / 2 + 1;
+	if (location < 1 || location > MAP_SIZE)
+		return 0;
+	return location;
 }
 
+/// <summary>
+/// validates a turn (multiple moves) and returns the captures this move would make
+/// </summary>
+/// <param name="map">the map pointer</param>
+/// <param name="positions">a list of positions</param>
+/// <param name="nbPositions">the number of positions in the list</param>
+/// <param name="captures">(out) a buffer for the list of captures</param>
+/// <param name="maxCaptures">the max the buffer can hold</param>
+/// <param name="nbCaptures">(out) a pointer to hold the number of captures made</param>
+/// <returns>returns true if the turn is valid, on error and/or invalid moves, it returns false</returns>
+bool map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures)
+{
+	uint8_t tmpCaptures, i, j, k;
+	bool result;
+	if (nbPositions < 2)
+		return false;
+	*nbCaptures = 0;
 
+	for (i = 0; i < nbPositions - 1; i++)
+	{
+		for (j = 0; j < *nbCaptures; j++)
+			if (captures[j] == positions[i + 1])
+				return false;
+		result = map_validate_move(map, positions[i], positions[i + 1], captures + *nbCaptures, MAX_CAPTURES - *nbCaptures, &tmpCaptures);
+		if (!result)
+			return false;
+		for (j = 0; j < *nbCaptures; j++)
+			for (k = *nbCaptures; k < *nbCaptures + tmpCaptures; k++)
+				if (captures[j] == captures[k])
+					return false;
+	}
+	return true;
+}
+
+/// <summary>
+/// validates the 
+/// </summary>
+/// <param name="map"></param>
+/// <param name="from"></param>
+/// <param name="to"></param>
+/// <param name="captures"></param>
+/// <param name="maxCaptures"></param>
+/// <param name="nbCaptures"></param>
+/// <returns></returns>
 bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, uint8_t maxCaptures, uint8_t * nbCaptures)
 {
 	int i;
@@ -37,9 +152,9 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 		return false;
 	if (nbCaptures == NULL && maxCaptures > 0)
 		return false;
-	if (from < 1 || from > 50)
+	if (from < 1 || from > MAP_SIZE)
 		return false;
-	if (to < 1 || to > 50)
+	if (to < 1 || to > MAP_SIZE)
 		return false;
 	if (map[from - 1] == EMPTY)
 		return false;
@@ -96,16 +211,26 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 				captures[(*nbCaptures)++] = location;
 		}
 	}
-
-
 	return true;
 }
 
-bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures)
+/// <summary>
+/// executes a turn (multiple moves)
+/// </summary>
+/// <param name="map">the map pointer</param>
+/// <param name="positions">a list of positions</param>
+/// <param name="nbPositions">the number of positions in the list</param>
+/// <returns>true if the turn is executes, false otherwise</returns>
+bool map_turn(Map* map, uint8_t* positions, uint8_t nbPositions)
 {
-	int i;
-	if (!map_validate_move(map, from, to, captures, maxCaptures, nbCaptures))
+	uint8_t captures[MAX_CAPTURES];
+	uint8_t nbCaptures = 0;
+	uint8_t to, from, i;
+	if (!map_validate_turn(map, positions, nbPositions, captures, MAX_CAPTURES, &nbCaptures))
 		return false;
+
+	from = positions[0];
+	to = positions[nbPositions - 1];
 
 	map[to - 1] = map[from - 1];
 	map[from - 1] = 0;
@@ -115,16 +240,16 @@ bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t max
 	else if ((map[to - 1] & PLAYER_1_MEN > 0) && to >= 46)
 		map[to - 1] = PLAYER_1_KING;
 
-	if (captures != NULL && nbCaptures != NULL && maxCaptures > 10)
-		for (i = 0; i < *nbCaptures; i++)
-			map[captures[i] - 1] = EMPTY;
+	for (i = 0; i < nbCaptures; i++)
+		map[captures[i] - 1] = EMPTY;
 
 	return true;
 }
 
-
-
-
+/// <summary>
+/// frees the memory used by the map
+/// </summary>
+/// <param name="map">the map pointer</param>
 void map_destroy(Map* map)
 {
 	free(map);
