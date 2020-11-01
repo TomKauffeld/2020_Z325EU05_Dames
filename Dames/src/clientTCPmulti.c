@@ -1,3 +1,8 @@
+#include "Header.h"
+
+#ifdef MODE_CLIENT
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -111,3 +116,7 @@ int main(int argc, char **argv){
 
     return 0;
 }
+
+
+
+#endif // MODE_CLIENT
