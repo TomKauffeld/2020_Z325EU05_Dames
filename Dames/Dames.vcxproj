@@ -76,12 +76,56 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="src\clientTCPmulti.c" />
+    <ClCompile Include="src\game\map.c" />
     <ClCompile Include="src\serveurTCPmulti.c" />
+    <ClCompile Include="src\utils\vector.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\map.h" />
     <ClInclude Include="src\Header.h" />
+    <ClInclude Include="src\utils\bool.h" />
+    <ClInclude Include="src\utils\vector.h" />
   </ItemGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

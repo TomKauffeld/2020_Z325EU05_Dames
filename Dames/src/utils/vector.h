@@ -8,6 +8,7 @@ typedef struct vector {
 	int y;
 } Vector;
 
+Vector vector_mult(Vector a, int b);
 
 Vector vector_add(Vector a, Vector b);
 
@@ -15,5 +16,6 @@ Vector vector_min(Vector a, Vector b);
 
 Vector vector_distance(Vector a, Vector b);
 
+Vector vector_get_unit(Vector a);
 
 #endif

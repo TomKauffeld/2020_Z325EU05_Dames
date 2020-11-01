@@ -30,9 +30,12 @@ uint8_t map_vector_to_location(Vector pos)
 
 bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, uint8_t maxCaptures, uint8_t * nbCaptures)
 {
-	Vector posFrom, posTo, dist, diff, tmp;
+	int i;
+	Vector posFrom, posTo, dist, diff, tmp, offset;
 	uint8_t location;
 	if (captures == NULL && maxCaptures > 0)
+		return false;
+	if (nbCaptures == NULL && maxCaptures > 0)
 		return false;
 	if (from < 1 || from > 50)
 		return false;
@@ -52,7 +55,7 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 
 	if (dist.x != dist.y)
 		return false;
-	if (map[from - 1] & MEN == MEN)
+	if (map[from - 1] & PIECE == MEN)
 	{
 		if (dist.x == 1)
 		{
@@ -71,10 +74,27 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 				return false;
 			if (map[location - 1] & PLAYER == map[from - 1] & PLAYER)
 				return false;
+
+			if (nbCaptures != NULL && *nbCaptures < maxCaptures)
+				captures[(*nbCaptures)++] = location;
 		}
 		else
 			return false;
-
+	}
+	else
+	{
+		offset = vector_get_unit(diff);
+		
+		for (i = 1; i < dist.x; i++)
+		{
+			tmp = vector_mult(offset, i);
+			tmp = vector_add(posFrom, tmp);
+			location = map_vector_to_location(tmp);
+			if (map[location - 1] & PLAYER == map[from - 1] & PLAYER)
+				return false;
+			if (map[location - 1] != EMPTY && nbCaptures != NULL && *nbCaptures < maxCaptures)
+				captures[(*nbCaptures)++] = location;
+		}
 	}
 
 
@@ -83,7 +103,8 @@ bool map_validate_move(Map* map, uint8_t from, uint8_t to, uint8_t * captures, u
 
 bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t maxCaptures, uint8_t* nbCaptures)
 {
-	if (!map_validate_move(map, from, to, NULL, 0, NULL))
+	int i;
+	if (!map_validate_move(map, from, to, captures, maxCaptures, nbCaptures))
 		return false;
 
 	map[to - 1] = map[from - 1];
@@ -93,6 +114,10 @@ bool map_move(Map* map, uint8_t from, uint8_t to, uint8_t* captures, uint8_t max
 		map[to - 1] = PLAYER_2_KING;
 	else if ((map[to - 1] & PLAYER_1_MEN > 0) && to >= 46)
 		map[to - 1] = PLAYER_1_KING;
+
+	if (captures != NULL && nbCaptures != NULL && maxCaptures > 10)
+		for (i = 0; i < *nbCaptures; i++)
+			map[captures[i] - 1] = EMPTY;
 
 	return true;
 }

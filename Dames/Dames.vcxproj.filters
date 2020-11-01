@@ -4,6 +4,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{d50c17f2-5cdc-4026-b747-b808ae7136ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\game">
+      <UniqueIdentifier>{3487ea54-3ae2-4220-aa7f-5f6ada90332a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{84b3b2dd-59d0-444f-b5f4-cf2c80cf601c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clientTCPmulti.c">
@@ -12,10 +18,25 @@
     <ClCompile Include="src\serveurTCPmulti.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\map.c">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\vector.c">
+      <Filter>src\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Header.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\map.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\bool.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\vector.h">
+      <Filter>src\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
