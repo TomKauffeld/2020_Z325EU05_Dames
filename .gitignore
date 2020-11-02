@@ -1,3 +1,6 @@
+# divers
+*.zip
+
 # Visual Studio
 .vs
 *\obj
