@@ -2,8 +2,8 @@
 #define __HEADER_H__
 
 
-#define MODE_SERVEUR
-//#define MODE_CLIENT
+//#define MODE_SERVEUR
+#define MODE_CLIENT
 
 
 

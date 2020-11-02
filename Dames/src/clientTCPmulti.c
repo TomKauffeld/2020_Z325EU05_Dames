@@ -14,8 +14,8 @@
 #include <unistd.h>
 #include <netdb.h> 
 
-#include "network/server/server.h"
-#include "network/common/sendMessage.h"
+#include "network/client/clientState.h"
+#include "network/client/clientSendMessage.h"
 
 
 #define BUFFER_SIZE 1024

@@ -131,6 +131,7 @@ boolean client_treat_message_guest_name(ClientState* clientState, int socket)
 	username[usernameLength] = 0;
 	if (clientState->username == NULL)
 	{
+		clientState->connectionStatus = CONNECTION_STATUS_CONNEXION_OK;
 		clientState->username = username;
 		free(username);
 		return TRUE;
@@ -160,6 +161,7 @@ boolean client_treat_message_ok(ClientState* clientState, int socket)
 	{
 		if (clientState->username != NULL)
 			free(clientState->username);
+		clientState->connectionStatus = CONNECTION_STATUS_CONNEXION_OK;
 		clientState->username = clientState->pendingUsername;
 		clientState->pendingUsername = NULL;
 	}
@@ -174,6 +176,7 @@ boolean client_treat_message_error(ClientState* clientState, int socket)
 	{
 	case ERROR_NOM_UTILISE:
 	case ERROR_CONNEXION:
+		clientState->connectionStatus = CONNECTION_STATUS_NON_CONNECTE;
 		if (clientState->pendingUsername != NULL)
 		{
 			free(clientState->pendingUsername);

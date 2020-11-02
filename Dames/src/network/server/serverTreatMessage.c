@@ -19,7 +19,10 @@ boolean server_treat_message(ServerState* serverState, int socket)
 	uint8_t messageType;
 	int read = read_socket(&messageType, 1, 1, socket);
 	if (read != 1)
+	{
+		server_remove_login(serverState, socket, server_treat_on_end_game);
 		return FALSE;
+	}
 	switch (messageType)
 	{
 	case CM_CREATION_DE_COMPTE:
