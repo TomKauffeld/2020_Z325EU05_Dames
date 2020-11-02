@@ -259,29 +259,34 @@ boolean server_treat_search(ServerState* serverState, int socket)
 	boolean result;
 	char gameName[UINT8_MAX];
 	int i;
-	uint8_t nbGames;
-	struct game* games = (struct game*)malloc(sizeof(struct game) * serverState->gamesSize);
-	for(i = 0; i < serverState->gamesSize; i++)
-		if (serverState->games[i] != NULL)
-		{
-			memset(gameName, 0x00, UINT8_MAX);
-			games[nbGames].id = i;
-			if (serverState->games[i]->player2 != NULL)
+	uint8_t nbGames = 0;
+	struct game* games = NULL;
+	if (serverState->gamesSize > 0)
+	{
+		games = (struct game*)malloc(sizeof(struct game) * serverState->gamesSize);
+		for (i = 0; i < serverState->gamesSize; i++)
+			if (serverState->games[i] != NULL)
 			{
-				sprintf(gameName, "%s vs %s", serverState->games[i]->player1->username, serverState->games[i]->player2->username);
-				games[nbGames].status = STATUS_ENCOURS;
+				memset(gameName, 0x00, UINT8_MAX);
+				games[nbGames].id = i;
+				if (serverState->games[i]->player2 != NULL)
+				{
+					sprintf(gameName, "%s vs %s", serverState->games[i]->player1->username, serverState->games[i]->player2->username);
+					games[nbGames].status = STATUS_ENCOURS;
+				}
+				else
+				{
+					sprintf(gameName, "%s", serverState->games[i]->player1->username);
+					games[nbGames].status = STATUS_ATTENTE;
+				}
+				games[nbGames].name = gameName;
+				games[nbGames].name_length = strlen(gameName);
+				nbGames++;
 			}
-			else
-			{
-				sprintf(gameName, "%s", serverState->games[i]->player1->username);
-				games[nbGames].status = STATUS_ATTENTE;
-			}
-			games[nbGames].name = gameName;
-			games[nbGames].name_length = strlen(gameName);
-			nbGames++;
-		}
+	}
 	result = send_message_list_games(socket, games, nbGames);
-	free(games);
+	if (games != NULL)
+		free(games);
 	return result;
 }
 

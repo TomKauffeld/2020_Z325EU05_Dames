@@ -6,4 +6,6 @@
 
 boolean client_treat_input(ClientState* clientState, char* text, int socket);
 
+boolean client_treat_input_main(ClientState* clientState, char* text, int socket);
+
 #endif

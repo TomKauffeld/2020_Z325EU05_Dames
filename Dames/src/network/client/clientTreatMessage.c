@@ -87,9 +87,11 @@ boolean client_treat_message_sync(ClientState* clientState, int socket)
 
 boolean client_treat_message_list_games(ClientState* clientState, int socket)
 {
-	int i;
+	int i, read;
 	uint8_t nbGames;
-	read_socket(&nbGames, 1, 1, socket);
+	read = read_socket(&nbGames, 1, 1, socket);
+	if (read != 1)
+		return FALSE;
 	if (clientState->availableGames != NULL)
 	{
 		for (i = 0; i < clientState->nbAvailableGames; i++)
@@ -104,13 +106,21 @@ boolean client_treat_message_list_games(ClientState* clientState, int socket)
 	clientState->nbAvailableGames = nbGames;
 	for (i = 0; i < nbGames; i++)
 	{
-		read_socket(&clientState->availableGames[i].id, 1, 1, socket);
-		read_socket(&clientState->availableGames[i].status, 1, 1, socket);
-		read_socket(&clientState->availableGames[i].name_length, 1, 1, socket);
+		read = read_socket(&clientState->availableGames[i].id, 1, 1, socket);
+		if (read != 1)
+			return FALSE;
+		read = read_socket(&clientState->availableGames[i].status, 1, 1, socket);
+		if (read != 1)
+			return FALSE;
+		read = read_socket(&clientState->availableGames[i].name_length, 1, 1, socket);
+		if (read != 1)
+			return FALSE;
 		clientState->availableGames[i].name = (char*)malloc(clientState->availableGames[i].name_length + 1);
 		if (clientState->availableGames[i].name != NULL)
 		{
-			read_socket(clientState->availableGames[i].name, 1, clientState->availableGames[i].name_length, socket);
+			read = read_socket(clientState->availableGames[i].name, 1, clientState->availableGames[i].name_length, socket);
+			if (read != clientState->availableGames[i].name_length)
+				return FALSE;
 			clientState->availableGames[i].name[clientState->availableGames[i].name_length] = 0;
 		}
 	}
@@ -133,7 +143,7 @@ boolean client_treat_message_guest_name(ClientState* clientState, int socket)
 	{
 		clientState->connectionStatus = CONNECTION_STATUS_CONNEXION_OK;
 		clientState->username = username;
-		free(username);
+		send_message_get_games(socket);
 		return TRUE;
 	}
 	else
@@ -157,13 +167,14 @@ boolean client_treat_message_ok(ClientState* clientState, int socket)
 		free(clientState->pendingPositions);
 		clientState->pendingPositions = NULL;
 	}
-	if (clientState->pendingUsername != NULL)
+	if (clientState->pendingUsername != NULL && clientState->connectionStatus == CONNECTION_STATUS_CONNEXION_PENDING)
 	{
 		if (clientState->username != NULL)
 			free(clientState->username);
 		clientState->connectionStatus = CONNECTION_STATUS_CONNEXION_OK;
 		clientState->username = clientState->pendingUsername;
 		clientState->pendingUsername = NULL;
+		send_message_get_games(socket);
 	}
 	return TRUE;
 }
@@ -202,7 +213,7 @@ boolean client_treat_message_error(ClientState* clientState, int socket)
 		clientState->map = NULL;
 		clientState->pendingPositions = NULL;
 		clientState->nbPendingPositions = 0;
-		clientState->player = 0;
+		clientState->player = CLIENT_PLAYER_NONE;
 		clientState->turn = 0;
 		return send_message_get_games(socket);
 	default:

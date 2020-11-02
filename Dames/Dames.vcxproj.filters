@@ -60,6 +60,15 @@
     <ClCompile Include="src\network\client\clientSendMessage.c">
       <Filter>src\network\client</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\client\clientTraitInput.c">
+      <Filter>src\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\client\clientState.c">
+      <Filter>src\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\client\clientDisplay.c">
+      <Filter>src\network\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Header.h">
@@ -89,9 +98,6 @@
     <ClInclude Include="src\network\server\login.h">
       <Filter>src\network\server</Filter>
     </ClInclude>
-    <ClInclude Include="src\network\client\client.h">
-      <Filter>src\network\client</Filter>
-    </ClInclude>
     <ClInclude Include="src\network\client\clientState.h">
       <Filter>src\network\client</Filter>
     </ClInclude>
@@ -108,6 +114,12 @@
       <Filter>src\network\client</Filter>
     </ClInclude>
     <ClInclude Include="src\network\client\clientSendMessage.h">
+      <Filter>src\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\clientTreatInput.h">
+      <Filter>src\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\client\clientDisplay.h">
       <Filter>src\network\client</Filter>
     </ClInclude>
   </ItemGroup>

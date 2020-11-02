@@ -16,7 +16,7 @@ ClientState* client_init()
 	clientState->pendingPositions = NULL;
 	clientState->pendingUsername = NULL;
 	clientState->pingState = PING_WAIT;
-	clientState->player = 0;
+	clientState->player = CLIENT_PLAYER_NONE;
 	clientState->turn = 0;
 	clientState->username = NULL;
 }

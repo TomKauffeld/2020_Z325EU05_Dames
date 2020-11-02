@@ -15,7 +15,9 @@
 #include <netdb.h> 
 
 #include "network/client/clientState.h"
-#include "network/client/clientSendMessage.h"
+#include "network/client/clientTreatMessage.h"
+#include "network/client/clientTreatInput.h"
+#include "network/client/clientDisplay.h"
 
 
 #define BUFFER_SIZE 1024
@@ -30,6 +32,7 @@ void connexion(const char *address){
     int mysocket, n = 0;
     SOCKADDR_IN sin = { 0 };
     struct hostent *hostinfo;
+    ClientState* clientState = client_init();
     
 
     fd_set rdfs;
@@ -63,7 +66,7 @@ void connexion(const char *address){
         FD_ZERO(&rdfs);
         FD_SET(STDIN_FILENO, &rdfs);
         FD_SET(mysocket, &rdfs);
-
+        client_display(clientState);
         if(select(mysocket + 1, &rdfs, NULL, NULL, NULL) == -1){
             perror("select()");
             exit(errno);
@@ -72,7 +75,6 @@ void connexion(const char *address){
         if(FD_ISSET(STDIN_FILENO, &rdfs)){
             fgets(buffer, BUFFER_SIZE - 1, stdin);
             {
-                
                 p = strstr(buffer, "\n");
                 if(p != NULL){
                     *p = 0;
@@ -80,39 +82,25 @@ void connexion(const char *address){
                     buffer[BUFFER_SIZE - 1] = 0;
                 }
             }
-            /*parser*/
-                if(!send_message(mysocket, uint8_t messageType, buffer, strlen(buffer))){
-                    perror("send_message()");
-                    exit(errno);
-                }
-            /**/
+            client_treat_input(clientState, buffer, mysocket);
 
         } else if(FD_ISSET(mysocket, &rdfs)){
-
-            n = 0;
-            if((n = recv(mysocket, buffer, BUFFER_SIZE - 1, 0)) < 0){
-                perror("recv()");
-                exit(errno);
-            }
-            buffer[n] = 0;
-
-            if(n == 0){
-                printf("Serveur dÃƒÂ©connectÃƒÂ© !\n");
-                break;
-            }
-            puts(buffer);
+            client_treat_message(clientState, mysocket);
         }
     }
+    client_destroy(clientState);
     close(mysocket);
 }
 
 int main(int argc, char **argv){
-    if(argc < 2){
-        printf("Too few argument (adresse) \n");
-        return -1;
-    }
+    //if(argc < 2){
+    //    printf("Too few argument (adresse) \n");
+    //    return -1;
+    //}
 
-    connexion(argv[1]);
+    //connexion(argv[1]);
+    connexion("192.168.0.40");
+
 
     return 0;
 }

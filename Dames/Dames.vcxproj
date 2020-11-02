@@ -77,7 +77,10 @@
   <ItemGroup>
     <ClCompile Include="src\clientTCPmulti.c" />
     <ClCompile Include="src\game\map.c" />
+    <ClCompile Include="src\network\client\clientDisplay.c" />
     <ClCompile Include="src\network\client\clientSendMessage.c" />
+    <ClCompile Include="src\network\client\clientState.c" />
+    <ClCompile Include="src\network\client\clientTraitInput.c" />
     <ClCompile Include="src\network\client\clientTreatMessage.c" />
     <ClCompile Include="src\network\common\sendMessage.c" />
     <ClCompile Include="src\network\server\login.c" />
@@ -91,9 +94,10 @@
   <ItemGroup>
     <ClInclude Include="src\game\map.h" />
     <ClInclude Include="src\Header.h" />
-    <ClInclude Include="src\network\client\client.h" />
+    <ClInclude Include="src\network\client\clientDisplay.h" />
     <ClInclude Include="src\network\client\clientState.h" />
     <ClInclude Include="src\network\client\clientSendMessage.h" />
+    <ClInclude Include="src\network\client\clientTreatInput.h" />
     <ClInclude Include="src\network\client\clientTreatMessage.h" />
     <ClInclude Include="src\network\common\codeMessages.h" />
     <ClInclude Include="src\network\common\network.h" />
@@ -122,6 +126,7 @@
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -134,12 +139,14 @@
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -152,6 +159,7 @@
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -31,7 +31,7 @@ boolean send_message_login_account(int socket, char* username, char* password)
 
 boolean send_message_login_guest(int socket)
 {
-	return send_message(socket, CM_CONNEXION_SPECTATEUR, NULL, 0);
+	return send_message(socket, CM_CONNEXION_MODE_INVITE, NULL, 0);
 }
 
 boolean send_message_create_game(int socket)
@@ -51,7 +51,7 @@ boolean send_message_spectate_game(int socket, uint8_t game_id)
 
 boolean send_message_get_games(int socket)
 {
-	return send_message(socket, CM_LISTE_PARTIES, NULL, 0);
+	return send_message(socket, CM_RECHERCHE, NULL, 0);
 }
 
 boolean send_message_req_sync(int socket)
