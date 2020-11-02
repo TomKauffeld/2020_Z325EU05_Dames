@@ -1,4 +1,4 @@
-#include "clientDisplay.h"
+﻿#include "clientDisplay.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,26 +59,81 @@ void client_display_connection_account(ClientState* clientState)
 	if (clientState->pendingUsername == NULL)
 	{
 		printf("Connection au compte\n");
-		printf("Nom d'utilisateur : ");
+		printf("Nom d'utilisateur : \n");
 	}
 	else
-		printf("Mot de passe : ");
+		printf("Mot de passe : \n");
 }
 
 void client_display_main(ClientState* clientState)
 {
-	int i;
 	printf("Connecte en tant que %s\n", clientState->username);
 	if (clientState->player == CLIENT_PLAYER_NONE)
+		client_display_list_games(clientState);
+	else
+		client_display_game(clientState);
+}
+
+void client_display_list_games(ClientState* clientState)
+{
+	int i;
+	printf("Parties en cours:\n");
+	if (clientState->availableGames != NULL)
 	{
-		printf("Parties en cours:\n");
-		if (clientState->availableGames != NULL)
+		for (i = 0; i < clientState->nbAvailableGames; i++)
+			printf("[%d] %s\n", i + 1, clientState->availableGames[i].name);
+	}
+	else
+		printf("chargement...\n");
+	printf("Pour creer une nouvelle partie, tapez \"create\"\n");
+}
+
+void client_display_game(ClientState* clientState)
+{
+	int i, line;
+	char symbole;
+	if (clientState->turn == 0)
+		printf("en attente d'un autre jouer\n");
+	else
+	{
+		printf("    A B C D E F G H I J\n");
+		for (i = 1; i <= 50; i++)
 		{
-			for (i = 0; i < clientState->nbAvailableGames; i++)
-				printf("[%d] %s\n", i + 1, clientState->availableGames[i].name);
+			line = (i - 1) / 5;
+			switch (map_get_symbole(clientState->map, i))
+			{
+			case PLAYER_1_KING:
+				symbole = 'B';
+				break;
+			case PLAYER_1_MEN:
+				symbole = 'b';
+				break;
+			case PLAYER_2_KING:
+				symbole = 'N';
+				break;
+			case PLAYER_2_MEN:
+				symbole = 'n';
+				break;
+			case EMPTY:
+				symbole = '.';
+				break;
+			default:
+				symbole = '?';
+				break;
+			}
+
+			if (i % 5 == 1)
+				printf("%2d ", line + 1);
+			if (line % 2 == 0)
+				printf("   %lc", symbole);
+			else
+				printf(" %lc  ", symbole);
+			if (i % 5 == 0)
+				printf("\n");
 		}
+		if (clientState->turn == clientState->player)
+			printf("C'est a ton tour\n");
 		else
-			printf("chargement...\n");
-		printf("Pour creer une nouvelle partie, tapez \"create\"\n");
+			printf("c'est au tour du joueur %d\n", clientState->turn);
 	}
 }

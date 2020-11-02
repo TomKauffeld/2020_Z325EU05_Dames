@@ -68,6 +68,13 @@ Map* map_unserialize(void* buffer, unsigned long bufferSize)
 	return map;
 }
 
+uint8_t map_get_symbole(Map* map, uint8_t location)
+{
+	if (location < 1 || location > MAP_SIZE)
+		return 0;
+	return map[location - 1];
+}
+
 /// <summary>
 /// Converts a location (used by the map system) to an vector
 /// </summary>

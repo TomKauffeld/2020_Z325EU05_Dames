@@ -233,9 +233,9 @@ boolean server_treat_join_game(ServerState* serverState, int socket)
 		return send_message_error(socket, ERROR_PARTIE_NON_TROUVE);
 	if (game->player2->socket != socket)
 		return send_message_error(socket, ERROR_PARTIE_EN_COURS);
-	if (!send_message_ok(socket))
-		return FALSE;
 	map_serialize(game->map, mapBuffer, 50);
+	if (!send_message_sync(socket, game->turn, mapBuffer))
+		return FALSE;
 	return send_message_sync(game->player1->socket, game->turn, mapBuffer);
 }
 

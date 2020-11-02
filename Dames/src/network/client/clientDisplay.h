@@ -6,4 +6,18 @@
 
 void client_display(ClientState* clientState);
 
+void client_display_connection_options(ClientState* clientState);
+
+void client_display_connection_pending(ClientState* clientState);
+
+void client_display_create_account(ClientState* clientState);
+
+void client_display_connection_account(ClientState* clientState);
+
+void client_display_main(ClientState* clientState);
+
+void client_display_list_games(ClientState* clientState);
+
+void client_display_game(ClientState* clientState);
+
 #endif

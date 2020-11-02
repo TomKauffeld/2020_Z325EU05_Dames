@@ -48,6 +48,8 @@ unsigned long map_serialize(Map* map, void* buffer, unsigned long bufferSize);
 /// <returns>the map that was serialized (or NULL if an error occured)</returns>
 Map* map_unserialize(void* buffer, unsigned long bufferSize);
 
+uint8_t map_get_symbole(Map* map, uint8_t location);
+
 /// <summary>
 /// Converts a location (used by the map system) to an vector
 /// </summary>
