@@ -113,52 +113,52 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
       <CompileAs>CompileAsC</CompileAs>
-      <PreprocessorDefinitions>_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MODE_CLIENT;_DEFAULT_SOURCE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>

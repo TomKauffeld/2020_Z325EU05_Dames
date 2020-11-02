@@ -1,0 +1,2 @@
+#!/bin/bash
+gcc src/serveurTCPmulti.c src/*/*.c src/*/*/*.c -o serveurDames.out -D MODE_SERVEUR -w

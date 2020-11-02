@@ -3,7 +3,7 @@
 
 
 //#define MODE_SERVEUR
-#define MODE_CLIENT
+//#define MODE_CLIENT
 
 
 

@@ -109,13 +109,13 @@ boolean client_treat_input_main(ClientState* clientState, char* text, int socket
 			case ';':
 				if (index >= 2)
 				{
+					Vector vector;
 					char c = tmp[0];
-					uint8_t ui;
-					sscanf(tmp + 1, "%d", &ui);
 					if (c >= 0x61)
 						c -= 32;
-					Vector vector;
-					vector.x = c - 65;
+					vector.x = (int)c - 65;
+					int ui;
+					sscanf(tmp + 1, "%d", &ui);
 					vector.y = ui - 1;
 					uint8_t pos = map_vector_to_location(vector);
 					if (pos > 0)
@@ -178,13 +178,13 @@ boolean client_treat_input_main(ClientState* clientState, char* text, int socket
 		{
 			if (index >= 2)
 			{
+				Vector vector;
 				char c = tmp[0];
-				uint8_t ui;
-				sscanf(tmp + 1, "%d", &ui);
 				if (c >= 0x61)
 					c -= 32;
-				Vector vector;
-				vector.x = c - 65;
+				vector.x = (int)c - 65;
+				uint8_t ui;
+				sscanf(tmp + 1, "%d", &ui);
 				vector.y = ui - 1;
 				uint8_t pos = map_vector_to_location(vector);
 				if (pos > 0)
