@@ -136,6 +136,7 @@ boolean map_validate_turn(Map* map, uint8_t* positions, uint8_t nbPositions, uin
 			for (k = *nbCaptures; k < *nbCaptures + tmpCaptures; k++)
 				if (captures[j] == captures[k])
 					return FALSE;
+		*nbCaptures += tmpCaptures;
 	}
 	return TRUE;
 }

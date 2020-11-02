@@ -100,7 +100,6 @@ int main(int argc, char **argv){
 
     connexion(argv[1]);
 
-
     return 0;
 }
 

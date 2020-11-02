@@ -113,7 +113,7 @@ boolean client_treat_input_main(ClientState* clientState, char* text, int socket
 					char c = tmp[0];
 					if (c >= 0x61)
 						c -= 32;
-					vector.x = (int)c - 65;
+					vector.x = c - 65;
 					int ui;
 					sscanf(tmp + 1, "%d", &ui);
 					vector.y = ui - 1;
@@ -182,8 +182,8 @@ boolean client_treat_input_main(ClientState* clientState, char* text, int socket
 				char c = tmp[0];
 				if (c >= 0x61)
 					c -= 32;
-				vector.x = (int)c - 65;
-				uint8_t ui;
+				vector.x = c - 65;
+				int ui;
 				sscanf(tmp + 1, "%d", &ui);
 				vector.y = ui - 1;
 				uint8_t pos = map_vector_to_location(vector);
